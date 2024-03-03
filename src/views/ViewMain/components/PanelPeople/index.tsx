@@ -71,7 +71,7 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
     }
     resetShownPersons(localShownPersons)
     console.log(new Date().toTimeString(), 'peopleSort, peopleSearch hook ended')
-  // }, [peopleSort, peopleSearch, persons])
+    // }, [peopleSort, peopleSearch, persons])
   }, [peopleSearch, persons])
 
   const resetShownPersons = (localShownPersons = persons): void => {
@@ -113,7 +113,7 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
 
   const panelHeader = (
     <FixedLayout vertical="top">
-      <PanelHeader separator={false}>Участники ШВА</PanelHeader>
+      <PanelHeader delimiter="none">Участники ШВА</PanelHeader>
       <div className="people-panel__header">
         <Search
           autoFocus
@@ -146,13 +146,13 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
                 shownPersons.length % 10 === 1
                   ? 'Найден ' + shownPersons.length.toString() + ' участник'
                   : shownPersons.length % 10 > 1 && shownPersons.length % 10 < 5
-                  ? 'Найдено ' + shownPersons.length.toString() + ' участника'
-                  : 'Найдено ' + shownPersons.length.toString() + ' участников'
+                    ? 'Найдено ' + shownPersons.length.toString() + ' участника'
+                    : 'Найдено ' + shownPersons.length.toString() + ' участников'
               }`
             : 'Никого не найдено'}
         </Footer>
 
-        <Tabbar shadow={false}>
+        <Tabbar plain={true}>
           <TabbarItem
             selected={tabbarItemId === eTabbarItemIds.Offline}
             text={eTabbarItemIds.Offline}

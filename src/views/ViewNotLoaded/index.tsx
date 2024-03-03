@@ -9,7 +9,7 @@ import './index.css'
 export const ViewNotLoaded: FC<iNonAuthViewsProps> = ({ ...rest }) => (
   <View activePanel={eViewIds.NotLoaded} {...rest}>
     <Panel id={ePanelIds.NotLoaded}>
-      <PanelHeader separator={false}>{REACT_APP_APP_TITLE}</PanelHeader>
+      <PanelHeader delimiter="none">{REACT_APP_APP_TITLE}</PanelHeader>
       <div className="view-notloaded__content">
         <Text className="view-notloaded__content-text">При загрузке произошла ошибка. Пожалуйста, попробуй позже.</Text>
         <img src={blockGif} alt="Access denied" className="view-notloaded__image" />

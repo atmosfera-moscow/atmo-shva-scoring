@@ -78,7 +78,6 @@
     "@craco/craco": "^7.1.0",
     "@types/convert-layout": "^0.5.3",
     "@types/lodash": "^4.14.202",
-    "@typescript-eslint/parser": "^7.1.0",
     "@vkontakte/vk-tunnel": "^0.1.4",
     "autoprefixer": "^10.4.18",
     "dotenv-cra": "^3.0.3",

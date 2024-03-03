@@ -42,7 +42,7 @@ export const ViewLoader: FC<iNonAuthViewsProps> = ({ ...rest }) => {
   return (
     <View activePanel={ePanelIds.Loader} {...rest}>
       <Panel id={ePanelIds.Loader}>
-        <PanelHeader separator={false} className="view-loader__header">
+        <PanelHeader delimiter="none" className="view-loader__header">
           {REACT_APP_APP_TITLE}
         </PanelHeader>
         <div className="view-loader__content">

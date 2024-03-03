@@ -38,11 +38,11 @@ export const getApiParticipants = async (): Promise<void> => {
   // return [personsToSet, { online: onlineToSet, offline: offlineToSet, medalsMeta }, config]
 }
 
-
 export const getApiMedals = async (): Promise<void> => {
   const CRMurl = `${REACT_APP_CRM_SITE}/api/v1/${REACT_APP_CRM_API_SHVA_MEDALS_ENTITY}`
   const headers = {
     'X-Api-Key': REACT_APP_CRM_API_TOKEN,
+    'Content-Type': 'application/json',
   }
 
   console.log(new Date().toTimeString(), 'getCRMMedals sent')
@@ -50,9 +50,6 @@ export const getApiMedals = async (): Promise<void> => {
   console.log({ data })
   console.log(new Date().toTimeString(), 'getCRMMedals recieved')
 }
-
-
-
 
 const suitePersons = (persons: iPersonDTO[]): iPerson[] => {
   let personsToSet: iPerson[] = persons.map((p) => {

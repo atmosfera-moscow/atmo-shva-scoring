@@ -44,11 +44,11 @@ export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, scoringI
     switch (mode) {
       case 'set':
         // [type, code] = getAppWidgetCode(group, persons)
-        [type, code] = getDynamicAppWidgetCode(group, persons)
+        ;[type, code] = getDynamicAppWidgetCode(group, persons)
         break
       case 'del':
-        type = "table"
-        code = "return false;"
+        type = 'table'
+        code = 'return false;'
         break
     }
 
@@ -69,7 +69,7 @@ export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, scoringI
   return (
     <View activePanel={eViewIds.Moderator} {...rest}>
       <Panel id={ePanelIds.Moderator}>
-        <PanelHeader separator={false} before={<PanelHeaderBack onClick={() => setActiveView(eViewIds.Main)} />}>
+        <PanelHeader delimiter="none" before={<PanelHeaderBack onClick={() => setActiveView(eViewIds.Main)} />}>
           Для админов
         </PanelHeader>
         <Div>
@@ -111,7 +111,7 @@ export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, scoringI
               onClick={() => updateAppWidget('online', 'del')}
               appearance="neutral"
               mode="primary"
-              loading={isShvaOnlineButtonLoading }
+              loading={isShvaOnlineButtonLoading}
             >
               Удалить виджет
             </Button>

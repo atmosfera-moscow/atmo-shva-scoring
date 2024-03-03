@@ -2,11 +2,13 @@ import { iMedalMeta, iPerson, iScoringMeta } from '@src/shared/types'
 import { Icon24ChevronDown, Icon24ChevronUp, Icon24LogoVkColor } from '@vkontakte/icons'
 import { Avatar, Badge, Counter, IconButton, InfoRow, SimpleCell, Subhead, Title } from '@vkontakte/vkui'
 import { FC, ReactElement, useEffect, useState } from 'react'
-import { getMedals } from '../Medals'
+// import { getMedals } from '../Medals'
 import './index.css'
 
-const medalsImagesRow = getMedals(18, '0')
-const medalsImagesHistory = getMedals(20, '0')
+// const medalsImagesRow = getMedals(18, '0')
+// const medalsImagesHistory = getMedals(20, '0')
+const medalsImagesRow = {"das": ""}
+const medalsImagesHistory = {}
 
 export interface iPersonCardProps {
   person: iPerson
@@ -28,8 +30,9 @@ export const PersonCard: FC<iPersonCardProps> = ({
     setIsCardCollapsed(isCardsCollapsed)
   }, [isCardsCollapsed])
 
+
   const pMedalsMeta = medalsMeta.filter(
-    (medalMeta) => person.medals.includes(medalMeta.key) && medalsImagesRow[medalMeta.key] && !medalMeta.disable
+    (medalMeta) => person.medals.includes(medalMeta.key) && !medalMeta.disable
   )
   const getHeaderSubtitles = (): ReactElement | undefined => {
     const headerSubtitles = []
@@ -55,7 +58,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
       {person.medals && person.medals.length > 0 && (
         <div className="person-card__header-medals">
           {pMedalsMeta.map((medalMeta) => (
-            <>{medalsImagesRow[medalMeta.key]}</>
+            <>"medalsImagesRow[medalMeta.key]"</>
           ))}
         </div>
       )}
@@ -74,7 +77,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
               const medalKey = medalMeta.key
               const { title_female, title_male, descr } = medalMeta
               const title = person.sex === 'Ж' ? title_female : title_male
-              const image = medalsImagesHistory[medalKey]
+              const image = "medalsImagesHistory[medalKey]"
               return (
                 <div className="person-card__content-medals-medal" key={medalKey}>
                   <>

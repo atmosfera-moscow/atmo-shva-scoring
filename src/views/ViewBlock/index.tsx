@@ -9,7 +9,7 @@ import './index.css'
 export const ViewBlock: FC<iNonAuthViewsProps> = ({ ...rest }) => (
   <View activePanel={eViewIds.Block} {...rest}>
     <Panel id={ePanelIds.Block}>
-      <PanelHeader separator={false}>{REACT_APP_APP_TITLE}</PanelHeader>
+      <PanelHeader delimiter="none">{REACT_APP_APP_TITLE}</PanelHeader>
       <div className="view-block__content">
         <Text className="view-block__content-text">
           В доступе отказано, так как ты не являешься организатором или участником ШВА.
