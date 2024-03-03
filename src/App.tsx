@@ -11,10 +11,10 @@ import {
 } from '@vkontakte/vkui'
 import '@vkontakte/vkui/dist/vkui.css'
 import { FC, useEffect, useState } from 'react'
-import { getGsheetsData } from './shared/api/gsheets'
+import { getApiMedals, getApiParticipants } from './shared/api/espocrm'
 import { checkIsAtmoMember } from './shared/api/vkbridge'
 import { eViewIds } from './shared/enums'
-import { ExtededUserInfo, iConfig, iPerson, iScoringInfo } from './shared/types'
+import { ExtendedUserInfo, iConfig, iPerson, iScoringInfo } from './shared/types'
 import { ViewBlock } from './views/ViewBlock'
 import { ViewLoader } from './views/ViewLoader'
 import { ViewMain } from './views/ViewMain'
@@ -25,7 +25,7 @@ const App: FC = () => {
   const [activeView, setActiveView] = useState<eViewIds>(eViewIds.Loader)
 
   const [scoringInfo, setScoringInfo] = useState<iScoringInfo>()
-  const [fetchedUser, setFetchedUser] = useState<ExtededUserInfo>()
+  const [fetchedUser, setFetchedUser] = useState<ExtendedUserInfo>()
   const [config, setConfig] = useState<iConfig>()
   const [curPerson, setCurPerson] = useState<iPerson>()
 
@@ -55,8 +55,10 @@ const App: FC = () => {
           return
         }
         console.log(new Date().toTimeString(), 'Access allowed 1')
+        await getApiMedals()
+        await getApiParticipants(
+        const [persons, scoringInfoToSet, configToSet] = undefined
 
-        const [persons, scoringInfoToSet, configToSet] = await getGsheetsData()
         console.log(new Date().toTimeString(), 'getGsheetsData processed')
         // console.log({ scoringInfoToSet })
 
@@ -89,7 +91,6 @@ const App: FC = () => {
           console.log('Mode user')
           setActiveView(eViewIds.Main)
         }
-    
       } catch (error) {
         console.log(new Date().toTimeString(), 'App.fetchData hook error', error)
         setActiveView(eViewIds.NotLoaded)

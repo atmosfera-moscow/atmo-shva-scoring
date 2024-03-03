@@ -1,6 +1,24 @@
 import { UserInfo } from '@vkontakte/vk-bridge'
 import { eTabbarItemIds } from './enums'
 
+export interface iEspoCRMPostPayload {
+  [key: string]: string[] | string | number | number[] | boolean
+}
+
+export interface iEspoCRMGetParams {
+  maxSize?: number
+  where?: iEspoCRMGetWhereParams[]
+  select?: string[]
+  // [key: string]: string[] | string | number | number[] | boolean
+}
+
+export interface iEspoCRMGetWhereParams {
+  type: string
+  attribute: string
+  value: string
+  [key: string]: string[] | string | number | number[] | boolean
+}
+
 export interface iGsheetsResDTO {
   online: iFormatDTO
   offline: iFormatDTO
@@ -98,7 +116,7 @@ export interface iSort {
   order: 1 | -1
 }
 
-export interface ExtededUserInfo extends UserInfo {
+export interface ExtendedUserInfo extends UserInfo {
   isAtmoMember: boolean
   isShvaParticipant: boolean
   isAppModerator: boolean

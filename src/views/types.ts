@@ -1,10 +1,10 @@
 import { eViewIds } from '@src/shared/enums'
-import { ExtededUserInfo, iPerson, iScoringInfo } from '@src/shared/types'
+import { ExtendedUserInfo, iPerson, iScoringInfo } from '@src/shared/types'
 import { ViewProps } from '@vkontakte/vkui'
 
 export interface iCustomViewProps extends Omit<ViewProps, 'activePanel'> {
   id: eViewIds
-  fetchedUser?: ExtededUserInfo
+  fetchedUser?: ExtendedUserInfo
 }
 
 export interface iNonAuthViewsProps extends iCustomViewProps {
@@ -15,7 +15,6 @@ export interface iModeratorViewProps extends iCustomViewProps {
   scoringInfo: iScoringInfo
   setActiveView: (view: eViewIds) => void
 }
-
 
 export interface iMainViewProps extends iCustomViewProps {
   curPerson: iPerson | undefined
