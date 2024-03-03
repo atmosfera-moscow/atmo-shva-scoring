@@ -1,6 +1,6 @@
 Первый запуск
 ```
-git clone git@github.com:pustoshilov-d/atmo-shva-scoring.git
+git clone git@github.com:atmosfera-moscow/atmo-shva-scoring.git
 yarn install
 ```
 

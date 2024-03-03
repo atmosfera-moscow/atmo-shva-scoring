@@ -5,8 +5,6 @@
 /.pnp
 .pnp.js
 
-/.trash
-
 # testing
 /coverage
 
