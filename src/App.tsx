@@ -55,7 +55,7 @@ const App: FC = () => {
         //   return
         // }
         console.log(new Date().toTimeString(), 'Access allowed 1')
-        await getApiMedals()
+        // await getApiMedals()
         await getApiParticipants()
         // const [persons, scoringInfoToSet, configToSet] = getApiParticipants()
 

@@ -19,6 +19,15 @@ export interface iEspoCRMGetWhereParams {
   [key: string]: string[] | string | number | number[] | boolean
 }
 
+export interface iEspoCRMGetResponce {
+  total: number
+  list: iEspoCRMGetParticipantsResponce[]
+}
+
+export interface iEspoCRMGetParticipantsResponce {
+  [key: string]: string[] | string | number | number[] | boolean
+}
+
 export interface iGsheetsResDTO {
   online: iFormatDTO
   offline: iFormatDTO
