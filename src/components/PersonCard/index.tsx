@@ -7,7 +7,7 @@ import './index.css'
 
 // const medalsImagesRow = getMedals(18, '0')
 // const medalsImagesHistory = getMedals(20, '0')
-const medalsImagesRow = {"das": ""}
+const medalsImagesRow = { 'das': '' }
 const medalsImagesHistory = {}
 
 export interface iPersonCardProps {
@@ -30,10 +30,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
     setIsCardCollapsed(isCardsCollapsed)
   }, [isCardsCollapsed])
 
-
-  const pMedalsMeta = medalsMeta.filter(
-    (medalMeta) => person.medals.includes(medalMeta.key) && !medalMeta.disable
-  )
+  const pMedalsMeta = medalsMeta.filter((medalMeta) => person.medals.includes(medalMeta.key) && !medalMeta.disable)
   const getHeaderSubtitles = (): ReactElement | undefined => {
     const headerSubtitles = []
     if (person.badge) {
@@ -77,7 +74,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
               const medalKey = medalMeta.key
               const { title_female, title_male, descr } = medalMeta
               const title = person.sex === 'Ж' ? title_female : title_male
-              const image = "medalsImagesHistory[medalKey]"
+              const image = 'medalsImagesHistory[medalKey]'
               return (
                 <div className="person-card__content-medals-medal" key={medalKey}>
                   <>
@@ -184,11 +181,11 @@ export const PersonCard: FC<iPersonCardProps> = ({
     <div className="person-card__content">
       <div className="person-card__content-info">{contentInfo}</div>
       <div className="person-card__content-buttons">
-        {person.vk_id && (
+        {person.vkID && (
           <IconButton
             aria-label="vk link"
             onClick={(e) => handleClick(e)}
-            href={`https://vk.com/id${person.vk_id}`}
+            href={`https://vk.com/id${person.vkID}`}
             target="_blank"
             rel="noreferrer"
             style={{ width: '24', height: '24', margin: '12' }}

@@ -6,108 +6,60 @@ import {
 } from '../consts'
 
 import AvatartPathArcticfox from '@assets/img/avatartArcticfox.svg'
-import { sortPersons } from '@views/ViewMain/components/PanelPeople/helpers'
 
-import { ePeopleSort, eTabbarItemIds } from '../enums'
-import {
-  iConfig,
-  iEspoCRMGetParams,
-  iEspoCRMGetResponce,
-  iGsheetsResDTO,
-  iPerson,
-  iPersonDTO,
-  iScoringInfo,
-} from '../types'
+import { iConfig, iMedal, iEspoCRMApiGetResponce, iCRMUser, iPerson } from '../types'
 import apiService from './ApiService'
 import { getPhotoUrls } from './vkbridge'
 
-export const getApiParticipants = async (): Promise<void> => {
-  const CRMUrlBase = `${REACT_APP_CRM_SITE}/api/v1/${REACT_APP_CRM_API_SHVA_PARTICIPANTS_ENTITY}`
+const getEspoCRMApi = async <T>(urlBase: string): Promise<T[]> => {
   const maxSize = 200
   const headers = {
     'X-Api-Key': REACT_APP_CRM_API_TOKEN,
     'Content-Type': 'application/json',
     'X-No-Total': 'true',
   }
-
-  console.log(new Date().toTimeString(), 'getCRMParticipants sent')
-  let isEmptyResponce = false
+  let isEmptyNextResponce = false
   let offset = 0
-  let dataList = []
-  while (!isEmptyResponce) {
-    const CRMUrl = `${CRMUrlBase}?offset=${offset}&maxSize=${maxSize}`
-    const { list } = await apiService.get<iEspoCRMGetResponce>(CRMUrl, { headers: headers })
+  let dataList: T[] = []
+  while (!isEmptyNextResponce) {
+    const CRMUrl = `${urlBase}?offset=${offset}&maxSize=${maxSize}`
+    const { list } = await apiService.get<iEspoCRMApiGetResponce<T>>(CRMUrl, { headers: headers })
     dataList.push(...list)
     offset += maxSize
-    isEmptyResponce = list.length === 0
-    console.log({dataList })
+    isEmptyNextResponce = list.length < maxSize
   }
-  // console.log({ data })
+  console.log({ dataList })
+  return dataList
+}
+
+export const getApiParticipants = async (): Promise<iPerson[]> => {
+  const urlBase = `${REACT_APP_CRM_SITE}/api/v1/${REACT_APP_CRM_API_SHVA_PARTICIPANTS_ENTITY}`
+  console.log(new Date().toTimeString(), 'getCRMParticipants sent')
+  let persons = await getEspoCRMApi<iPerson>(urlBase)
   console.log(new Date().toTimeString(), 'getCRMParticipants recieved')
 
-  // const { online, offline, medalsMeta, persons, config } = gsheetsData
   // let personsToSet = suitePersons(persons)
   // // personsToSet = sortPersons({ persons: personsToSet, ...ePeopleSort.SUM })
-  // personsToSet = await updatePhotos(personsToSet)
 
-  // let onlineToSet = { ...online, persons: personsToSet.filter((p) => p.format === eTabbarItemIds.Online) }
-  // onlineToSet = { ...onlineToSet, persons: onlineToSet.persons }
-  // let offlineToSet = { ...offline, persons: personsToSet.filter((p) => p.format === eTabbarItemIds.Offline) }
-  // offlineToSet = { ...offlineToSet, persons: offlineToSet.persons }
-
-  // personsToSet = offlineToSet.persons.concat(onlineToSet.persons)
-  // return [personsToSet, { online: onlineToSet, offline: offlineToSet, medalsMeta }, config]
+  persons = await updatePhotos(persons)
+  return persons
 }
 
-export const getApiMedals = async (): Promise<void> => {
-  const CRMUrlBase = `${REACT_APP_CRM_SITE}/api/v1/${REACT_APP_CRM_API_SHVA_MEDALS_ENTITY}`
-  const maxSize = 200
-  const headers = {
-    'X-Api-Key': REACT_APP_CRM_API_TOKEN,
-    'Content-Type': 'application/json',
-    'X-No-Total': 'true',
-  }
+// TODO: users & config api get
 
-  console.log(new Date().toTimeString(), 'getCRMMedals sent')
-
-  let isEmptyResponce = false
-  let offset = 0
-  let dataList = []
-  while (!isEmptyResponce) {
-    const CRMUrl = `${CRMUrlBase}?offset=${offset}&maxSize=${maxSize}`
-    const data = await apiService.get<iEspoCRMGetResponce>(CRMUrl, { headers: headers })
-    console.log({ data })
-    offset += maxSize
-    // isEmptyResponce =
-  }
-  console.log(new Date().toTimeString(), 'getCRMMedals recieved')
+export const getApiMedals = async (): Promise<iMedal[]> => {
+  const urlBase = `${REACT_APP_CRM_SITE}/api/v1/${REACT_APP_CRM_API_SHVA_MEDALS_ENTITY}`
+  console.log(new Date().toTimeString(), 'getApiMedals sent')
+  let medals = await getEspoCRMApi<iMedal>(urlBase)
+  console.log(new Date().toTimeString(), 'getApiMedals recieved')
+  return medals
 }
 
-const suitePersons = (persons: iPersonDTO[]): iPerson[] => {
-  let personsToSet: iPerson[] = persons.map((p) => {
-    const pToSet = {
-      ...p,
-      'medals': p.medals
-        ? p.medals
-            .toString()
-            .replaceAll('\r', '')
-            .replaceAll('\n', ',')
-            .split(',')
-            .map((m) => m.trim())
-        : [],
-      'sex': p.sex || 'М',
-    }
-    return pToSet
-  })
-
-  return personsToSet
-}
-
-export const updatePhotos = async (localPersons: iPerson[]): Promise<iPerson[]> => {
-  const photos = await getPhotoUrls(localPersons.map((p) => p.vk_id))
-  const personsToSet = localPersons.map((person) => ({
+export const updatePhotos = async (persons: iPerson[]): Promise<iPerson[]> => {
+  const photos = await getPhotoUrls(persons.map((p) => p.vkID))
+  const personsToSet = persons.map((person) => ({
     ...person,
-    'photo': photos.find((i) => i.id === person.vk_id)?.photo || AvatartPathArcticfox,
+    'photo': photos.find((i) => i.id === person.vkID)?.photo || AvatartPathArcticfox,
   }))
   return personsToSet
 }

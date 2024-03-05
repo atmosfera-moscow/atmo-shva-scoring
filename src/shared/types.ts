@@ -1,118 +1,67 @@
 import { UserInfo } from '@vkontakte/vk-bridge'
 import { eTabbarItemIds } from './enums'
 
-export interface iEspoCRMPostPayload {
+export interface iEspoCRMApiPostPayload {
   [key: string]: string[] | string | number | number[] | boolean
 }
 
-export interface iEspoCRMGetParams {
+export interface iEspoCRMApiGetParams {
   maxSize?: number
-  where?: iEspoCRMGetWhereParams[]
+  where?: iEspoCRMApiGetWhereParams[]
   select?: string[]
   // [key: string]: string[] | string | number | number[] | boolean
 }
 
-export interface iEspoCRMGetWhereParams {
+export interface iEspoCRMApiGetWhereParams {
   type: string
   attribute: string
   value: string
   [key: string]: string[] | string | number | number[] | boolean
 }
 
-export interface iEspoCRMGetResponce {
+export interface iEspoCRMApiGetResponce<T> {
   total: number
-  list: iEspoCRMGetParticipantsResponce[]
-}
-
-export interface iEspoCRMGetParticipantsResponce {
-  [key: string]: string[] | string | number | number[] | boolean
-}
-
-export interface iGsheetsResDTO {
-  online: iFormatDTO
-  offline: iFormatDTO
-  medalsMeta: iMedalMeta[]
-  persons: iPersonDTO[]
-  config: iConfig
+  list: T[]
 }
 
 export interface iConfig {
-  shva_group_id: number
-  moderators: number[]
-  admins: number[]
-  [key: string]: string[] | string | number | number[] | boolean
+  isOnlineEnabled: boolean
+  isOfflineEnabled: boolean
 }
 
-export interface iScoringInfo {
-  online: iFormat
-  offline: iFormat
-  medalsMeta: iMedalMeta[]
-}
-
-export interface iMedalMeta {
+export interface iMedal {
+  id: string
   key: string
-  title_male: string
-  title_female: string
-  descr?: string
-  disable?: boolean
+  titleMale: string
+  titleFemale: string
+  description: string
+  disabled: boolean
   limit?: number
-  type?: 'dynamic' | 'static'
+  type: 'dynamic' | 'static'
+  [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
-export interface iFormatDTO {
-  enable: boolean
-  meta: iScoringMeta
-}
-
-export interface iFormat {
-  enable: boolean
-  meta: iScoringMeta
-  persons: iPerson[]
-}
-
-export interface iScoringMeta {
-  [key: string]: iScoringMetaKey
-}
-
-export interface iScoringMetaKey {
-  title_ru?: string
-  max_score?: number
-  is_dynamic?: boolean
-  column?: string
-}
-
-export interface iPersonDTO {
-  sex?: 'Ж' | 'М'
-  photo?: string
-  vk_id?: number
-  name?: string
-  surname?: string
-  medals?: string
-  badge?: number | string
-  team?: number
-  message?: string
-  format: eTabbarItemIds
-  place?: number
-  sum: number
-  excluded: boolean
-  [key: string]: string | number | boolean | undefined
+export interface iCRMUser {
+  id: string
+  key: string
+  [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
 export interface iPerson {
+  id: string
   sex: 'Ж' | 'М'
   photo?: string
-  vk_id?: number
-  name?: string
-  surname?: string
+  vkID: number
+  firstName: string
+  lastName: string
   medals: string[]
   badge?: number | string
-  team?: number
+  numberOfTeam?: string
   message?: string
-  format: eTabbarItemIds
-  place?: number
-  sum: number
+  eduFormat: eTabbarItemIds
+  totalScore: number
   excluded: boolean
-  [key: string]: string | number | boolean | string[] | number[] | undefined
+  // [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
 export interface iFilter {

@@ -184,7 +184,7 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
         >
           {scrolledPersons.map((person, index) => (
             <PersonCard
-              key={`${index} ${person.vk_id}`}
+              key={`${index} ${person.vkID}`}
               person={person}
               isCurPerson={person === curPerson}
               scoringMeta={format!.meta}

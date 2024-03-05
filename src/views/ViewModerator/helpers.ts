@@ -49,8 +49,8 @@ export const getAppWidgetCode = (group: 'offline' | 'online', persons: iPerson[]
     return [
       {
         'text': `${p.name} ${p.surname}`,
-        'icon_id': `id${p.vk_id}`,
-        'url': `https://vk.com/id${p.vk_id}`,
+        'icon_id': `id${p.vkID}`,
+        'url': `https://vk.com/id${p.vkID}`,
       },
       {
         'text': `${p.place}`,
@@ -120,7 +120,7 @@ export const getDynamicAppWidgetCode = (group: 'offline' | 'online', persons: iP
   persons = persons.filter((p) => !p.excluded && p.sum && p.sum > 1)
   console.log(`Show in widget ${persons.length}`)
   if (persons.length > 200) {
-    persons = persons.slice(0,200)
+    persons = persons.slice(0, 200)
   }
   console.log(`Show in widget ${persons.length}`)
 
@@ -128,15 +128,15 @@ export const getDynamicAppWidgetCode = (group: 'offline' | 'online', persons: iP
     'p': p.place ? p.place : null,
     'n': p.name ? p.name : null,
     'sn': p.surname ? p.surname : null,
-    'id': p.vk_id ? p.vk_id : null,
+    'id': p.vkID ? p.vkID : null,
     'b': p.badge ? p.badge : null,
     't': p.team ? p.team : null,
     's': p.sum ? p.sum : null,
   }))
-//   persons_short.push({ 'p': 15, 'n': 'Dmitry', 'sn': 'Pust', 'id': 52167654, 'b': 31, 't': 312, 's': 105 })
+  //   persons_short.push({ 'p': 15, 'n': 'Dmitry', 'sn': 'Pust', 'id': 52167654, 'b': 31, 't': 312, 's': 105 })
 
   let persons_str = 'var persons_short=['
-//   let persons_str = 'var persons_short=[];'
+  //   let persons_str = 'var persons_short=[];'
   persons_short.forEach((p, i) => {
     persons_str = `${persons_str} ${i % 2 === 1 ? '\n' : ''} ${JSON.stringify(p)},`
     // persons_str = `${persons_str} ${i % 2 === 1 ? '\n' : ''} persons_short.push(${JSON.stringify(p)});`
@@ -146,14 +146,14 @@ export const getDynamicAppWidgetCode = (group: 'offline' | 'online', persons: iP
   code = `${code} \n ${persons_str}`
 
   code = `${code} \n
-        var vk_id = Args.uid;
+        var vkID = Args.uid;
         var persons_top = persons_short.slice(0, 10);
 
         var i = 0;
         var cur_person = null;
         do {
             var p = persons_short[i];
-            if (p.id !=null && p.id == vk_id && p.p !=null && p.p > 10) {
+            if (p.id !=null && p.id == vkID && p.p !=null && p.p > 10) {
                 cur_person = p;
             };
             i = i + 1;
@@ -168,7 +168,7 @@ export const getDynamicAppWidgetCode = (group: 'offline' | 'online', persons: iP
         do {
             var p = persons_top[i];
             var name = (p.n != null ? p.n : "") + " " + (p.sn != null ? p.sn : "");
-            if (p.id !=null && p.id == vk_id) {
+            if (p.id !=null && p.id == vkID) {
                 name = name + "⭐";
             };
             body.push([
@@ -195,6 +195,6 @@ export const getDynamicAppWidgetCode = (group: 'offline' | 'online', persons: iP
         widget.body = body;
         return widget;
     `
-//   console.log({ code })
+  //   console.log({ code })
   return [type, code]
 }

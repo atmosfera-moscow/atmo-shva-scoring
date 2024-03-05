@@ -14,7 +14,7 @@ import { FC, useEffect, useState } from 'react'
 import { getApiMedals, getApiParticipants } from './shared/api/espocrm'
 import { checkIsAtmoMember } from './shared/api/vkbridge'
 import { eViewIds } from './shared/enums'
-import { ExtendedUserInfo, iConfig, iPerson, iScoringInfo } from './shared/types'
+import { ExtendedUserInfo, iConfig, iPerson } from './shared/types'
 // import { ViewBlock } from './views/ViewBlock'
 // import { ViewLoader } from './views/ViewLoader'
 // import { ViewMain } from './views/ViewMain'
@@ -24,7 +24,7 @@ const App: FC = () => {
   const [appearance, setAppearance] = useState<AppearanceType>('dark')
   const [activeView, setActiveView] = useState<eViewIds>(eViewIds.Loader)
 
-  const [scoringInfo, setScoringInfo] = useState<iScoringInfo>()
+  // const [scoringInfo, setScoringInfo] = useState<iScoringInfo>()
   const [fetchedUser, setFetchedUser] = useState<ExtendedUserInfo>()
   const [config, setConfig] = useState<iConfig>()
   const [curPerson, setCurPerson] = useState<iPerson>()
@@ -41,28 +41,29 @@ const App: FC = () => {
     async function fetchData() {
       console.log(new Date().toTimeString(), 'App.fetchData hook called')
       try {
-        // let fetchedUserToSet = {
-        //   ...(await bridge.send('VKWebAppGetUserInfo')),
-        //   isAtmoMember: false,
-        //   isAppModerator: false,
-        //   isAppAdmin: false,
-        //   isShvaParticipant: false,
-        // }
+        let fetchedUserToSet = {
+          ...(await bridge.send('VKWebAppGetUserInfo')),
+          isAtmoMember: false,
+          isAppModerator: false,
+          isAppAdmin: false,
+          isShvaParticipant: false,
+        }
 
-        // if (!fetchedUserToSet) {
-        //   console.log(new Date().toTimeString(), 'Access denied 1')
-        //   setActiveView(eViewIds.Block)
-        //   return
-        // }
+        if (!fetchedUserToSet) {
+          console.log(new Date().toTimeString(), 'Access denied 1')
+          setActiveView(eViewIds.Block)
+          return
+        }
         console.log(new Date().toTimeString(), 'Access allowed 1')
-        // await getApiMedals()
-        await getApiParticipants()
-        // const [persons, scoringInfoToSet, configToSet] = getApiParticipants()
 
-        // console.log(new Date().toTimeString(), 'getGsheetsData processed')
-        // // console.log({ scoringInfoToSet })
+        const medals = await getApiMedals()
+        console.log({ medals })
+        const persons = await getApiParticipants()
+        console.log({ persons })
 
-        // const isShvaParticipant = persons.map((p) => p.vk_id).includes(fetchedUserToSet.id)
+        console.log(new Date().toTimeString(), 'getGsheetsData processed')
+
+        // const isShvaParticipant = persons.map((p) => p.vkID).includes(fetchedUserToSet.id)
         // const isAtmoMember = await checkIsAtmoMember(fetchedUserToSet.id)
         // const isAppModerator = configToSet?.moderators.includes(fetchedUserToSet.id) || false
         // const isAppAdmin = configToSet?.admins.includes(fetchedUserToSet.id) || false
@@ -76,7 +77,7 @@ const App: FC = () => {
         // }
         // console.log(new Date().toTimeString(), 'Access allowed 1')
 
-        // let curPersonToSet = persons.filter((person) => person.vk_id === fetchedUserToSet?.id)[0] || undefined
+        // let curPersonToSet = persons.filter((person) => person.vkID === fetchedUserToSet?.id)[0] || undefined
 
         // setConfig(configToSet)
         // setFetchedUser(fetchedUserToSet)

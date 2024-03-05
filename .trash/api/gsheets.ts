@@ -52,10 +52,10 @@
 // }
 
 // export const updatePhotos = async (localPersons: iPerson[]): Promise<iPerson[]> => {
-//   const photos = await getPhotoUrls(localPersons.map((p) => p.vk_id))
+//   const photos = await getPhotoUrls(localPersons.map((p) => p.vkID))
 //   const personsToSet = localPersons.map((person) => ({
 //     ...person,
-//     'photo': photos.find((i) => i.id === person.vk_id)?.photo || AvatartPathArcticfox,
+//     'photo': photos.find((i) => i.id === person.vkID)?.photo || AvatartPathArcticfox,
 //   }))
 //   return personsToSet
 // }
