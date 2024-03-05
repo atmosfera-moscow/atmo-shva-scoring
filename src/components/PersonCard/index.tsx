@@ -1,4 +1,4 @@
-import { iMedalMeta, iPerson, iScoringMeta } from '@src/shared/types'
+import { iMedal, iPerson } from '@src/shared/types'
 import { Icon24ChevronDown, Icon24ChevronUp, Icon24LogoVkColor } from '@vkontakte/icons'
 import { Avatar, Badge, Counter, IconButton, InfoRow, SimpleCell, Subhead, Title } from '@vkontakte/vkui'
 import { FC, ReactElement, useEffect, useState } from 'react'
@@ -14,35 +14,35 @@ export interface iPersonCardProps {
   person: iPerson
   isCardsCollapsed: boolean
   isCurPerson: boolean
-  scoringMeta: iScoringMeta
-  medalsMeta: iMedalMeta[]
+  // scoringMeta: iScoringMeta
+  // medalsMeta: iMedal[]
 }
 
 export const PersonCard: FC<iPersonCardProps> = ({
   person,
   isCardsCollapsed,
   isCurPerson,
-  scoringMeta,
-  medalsMeta,
+  // scoringMeta,
+  // medalsMeta,
 }) => {
   const [isCardCollapsed, setIsCardCollapsed] = useState<boolean>(isCardsCollapsed)
   useEffect(() => {
     setIsCardCollapsed(isCardsCollapsed)
   }, [isCardsCollapsed])
 
-  const pMedalsMeta = medalsMeta.filter((medalMeta) => person.medals.includes(medalMeta.key) && !medalMeta.disable)
+  // const pMedalsMeta = medalsMeta.filter((medalMeta) => person.medals.includes(medalMeta.key) && !medalMeta.disable)
   const getHeaderSubtitles = (): ReactElement | undefined => {
     const headerSubtitles = []
     if (person.badge) {
       headerSubtitles.push(`${person.badge} бейдж`)
     }
-    if (person.team) {
-      headerSubtitles.push(`${person.team} команда`)
+    if (person.numberOfTeam) {
+      headerSubtitles.push(`${person.numberOfTeam} команда`)
     }
-    if (person.sum || person.sum === 0) {
-      let floor = Math.floor(person.sum) % 10
+    if (person.totalScore || person.totalScore === 0) {
+      let floor = Math.floor(person.totalScore) % 10
       let title = floor === 1 ? 'балл' : floor > 1 && floor < 5 ? 'балла' : 'баллов'
-      headerSubtitles.push(`${person.sum} ${title}`)
+      headerSubtitles.push(`${person.totalScore} ${title}`)
     }
     if (headerSubtitles.length) {
       return <Subhead className="person-card__header-subtitle">{headerSubtitles.join(' • ')}</Subhead>
@@ -54,9 +54,9 @@ export const PersonCard: FC<iPersonCardProps> = ({
     <>
       {person.medals && person.medals.length > 0 && (
         <div className="person-card__header-medals">
-          {pMedalsMeta.map((medalMeta) => (
+          {/* {pMedalsMeta.map((medalMeta) => (
             <>"medalsImagesRow[medalMeta.key]"</>
-          ))}
+          ))} */}
         </div>
       )}
     </>
@@ -70,7 +70,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
             <b>Достижения:</b>
           </InfoRow>
           <div className="person-card__content-medals-list">
-            {pMedalsMeta.map((medalMeta) => {
+            {/* {pMedalsMeta.map((medalMeta) => {
               const medalKey = medalMeta.key
               const { title_female, title_male, descr } = medalMeta
               const title = person.sex === 'Ж' ? title_female : title_male
@@ -85,7 +85,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
                   </>
                 </div>
               )
-            })}
+            })} */}
           </div>
         </>
       )}
@@ -105,7 +105,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
       </Avatar>
       <div className="person-card__header">
         <div className="person-card__header-title">
-          <Title level="3">{`${person.name ? person.name + ' ' : ''}${person.surname ? person.surname : ''}`}</Title>
+          <Title level="3">{`${person.firstName ? person.firstName + ' ' : ''}${person.lastName ? person.lastName : ''}`}</Title>
           {isCurPerson && <Subhead className="person-card__header-title-star">⭐</Subhead>}
           {person.excluded && (
             <Badge className="person-card__header-title-badge" mode="prominent" aria-label="Исключён" />
@@ -127,7 +127,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
     e.nativeEvent.stopImmediatePropagation()
   }
 
-  const contentInfoKeys = Object.getOwnPropertyNames(person).filter((k) => scoringMeta[k] && scoringMeta[k].is_dynamic)
+  // const contentInfoKeys = Object.getOwnPropertyNames(person).filter((k) => scoringMeta[k] && scoringMeta[k].is_dynamic)
   // console.log({ contentInfoKeys })
   const contentInfo = (
     <>
@@ -140,7 +140,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
         </div>
       )}
       {medalsHistory}
-      {contentInfoKeys
+      {/* {contentInfoKeys
         .filter((key) => (person[key] || person[key] === 0) && scoringMeta[key].title_ru)
         .map((key) => {
           const value = person[key]
@@ -173,7 +173,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
               {value}
             </InfoRow>
           )
-        })}
+        })} */}
     </>
   )
 

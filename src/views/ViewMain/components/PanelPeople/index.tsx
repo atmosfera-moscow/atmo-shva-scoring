@@ -35,7 +35,7 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
   scoringInfo,
   ...rest
 }) => {
-  const [tabbarItemId, setTabbarItemId] = useState<eTabbarItemIds>(curPerson?.format || eTabbarItemIds.Offline)
+  const [tabbarItemId, setTabbarItemId] = useState<eTabbarItemIds>(curPerson?.eduFormat || eTabbarItemIds.Offline)
   const [format, setFormat] = useState<iFormat>()
   const [peopleSearch, setPeopleSearch] = useState<string>('')
   const [peopleSort, setPeopleSort] = useState<iSort | null>(ePeopleSort.SUM)
@@ -49,9 +49,10 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
 
   useEffect(() => {
     console.log(new Date().toTimeString(), 'tabbarItemId hook called')
-    const localFormat = tabbarItemId === eTabbarItemIds.Online ? scoringInfo.online : scoringInfo.offline
+    const localFormat = tabbarItemId === eTabbarItemIds.Online
+    //  ? scoringInfo.online : scoringInfo.offline
     setFormat(localFormat)
-    setPersons(localFormat.persons)
+    // setPersons(localFormat.persons)
     setPeopleSearch('')
     console.log(new Date().toTimeString(), 'tabbarItemId hook ended')
   }, [tabbarItemId])
@@ -187,8 +188,8 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
               key={`${index} ${person.vkID}`}
               person={person}
               isCurPerson={person === curPerson}
-              scoringMeta={format!.meta}
-              medalsMeta={scoringInfo.medalsMeta}
+              // scoringMeta={undefined}
+              // medalsMeta={scoringInfo}
               isCardsCollapsed={isPeopleCardsCollapsed}
             />
           ))}
@@ -208,7 +209,7 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
     <Panel {...rest}>
       {panelHeader}
       <Spacing size={100} />
-      {(format && format.enable) || fetchedUser?.isAppModerator ? content : updating}
+      {(format) || fetchedUser?.isAppModerator ? content : updating}
       <Spacing size={60} />
       {panelFooter}
     </Panel>

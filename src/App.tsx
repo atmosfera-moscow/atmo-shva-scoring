@@ -14,7 +14,7 @@ import { FC, useEffect, useState } from 'react'
 import { getApiMedals, getApiParticipants } from './shared/api/espocrm'
 import { checkIsAtmoMember } from './shared/api/vkbridge'
 import { eViewIds } from './shared/enums'
-import { ExtendedUserInfo, iConfig, iPerson } from './shared/types'
+import { ExtendedUserInfo, iConfig, iPerson, iScoringInfo } from './shared/types'
 // import { ViewBlock } from './views/ViewBlock'
 // import { ViewLoader } from './views/ViewLoader'
 // import { ViewMain } from './views/ViewMain'
@@ -24,7 +24,7 @@ const App: FC = () => {
   const [appearance, setAppearance] = useState<AppearanceType>('dark')
   const [activeView, setActiveView] = useState<eViewIds>(eViewIds.Loader)
 
-  // const [scoringInfo, setScoringInfo] = useState<iScoringInfo>()
+  const [scoringInfo, setScoringInfo] = useState<iScoringInfo>()
   const [fetchedUser, setFetchedUser] = useState<ExtendedUserInfo>()
   const [config, setConfig] = useState<iConfig>()
   const [curPerson, setCurPerson] = useState<iPerson>()

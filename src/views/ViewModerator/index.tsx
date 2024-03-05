@@ -9,7 +9,7 @@ import './index.css'
 import { getAppWidgetCode, getDynamicAppWidgetCode } from './helpers'
 import { iPerson } from '@src/shared/types'
 
-export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, scoringInfo, fetchedUser, ...rest }) => {
+export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, config, fetchedUser, ...rest }) => {
   const [isShvaButtonLoading, setIsShvaButtonLoading] = useState<boolean>(false)
   const [isShvaOnlineButtonLoading, setIisShvaOnlineButtonLoading] = useState<boolean>(false)
   useEffect(() => {
@@ -81,7 +81,7 @@ export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, scoringI
               // stretched={true}
               mode="primary"
               loading={isShvaButtonLoading}
-              disabled={!scoringInfo.offline.enable}
+              disabled={!config.offline.enable}
             >
               Обновить виджет
             </Button>

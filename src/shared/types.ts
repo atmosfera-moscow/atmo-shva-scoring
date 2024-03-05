@@ -41,6 +41,10 @@ export interface iMedal {
   [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
+export interface iFormat {
+
+}
+
 export interface iCRMUser {
   id: string
   key: string
@@ -49,12 +53,17 @@ export interface iCRMUser {
 
 export interface iPerson {
   id: string
+  // TODO: rm
+  place: number
   sex: 'Ж' | 'М'
   photo?: string
   vkID: number
   firstName: string
   lastName: string
+  // TODO: rm
   medals: string[]
+  shvaScroingMedalsDynamic?: string
+  shvaScroingMedalsStatic?: string
   badge?: number | string
   numberOfTeam?: string
   message?: string
@@ -62,6 +71,14 @@ export interface iPerson {
   totalScore: number
   excluded: boolean
   // [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
+}
+
+export interface iScoringInfo {
+  medals: iMedal[]
+  persons: iPerson[] 
+  onlinePersons: iPerson[]
+  offlinePersons: iPerson[]
+  config: iConfig
 }
 
 export interface iFilter {

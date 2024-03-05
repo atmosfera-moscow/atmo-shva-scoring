@@ -48,7 +48,7 @@ export const getAppWidgetCode = (group: 'offline' | 'online', persons: iPerson[]
   code['body'] = persons_top.map((p) => {
     return [
       {
-        'text': `${p.name} ${p.surname}`,
+        'text': `${p.firstName} ${p.lastName}`,
         'icon_id': `id${p.vkID}`,
         'url': `https://vk.com/id${p.vkID}`,
       },
@@ -59,10 +59,10 @@ export const getAppWidgetCode = (group: 'offline' | 'online', persons: iPerson[]
         'text': `${p.badge}`,
       },
       {
-        'text': `${p.team}`,
+        'text': `${p.numberOfTeam}`,
       },
       {
-        'text': `${p.sum}`,
+        'text': `${p.totalScore}`,
       },
     ]
   })
@@ -117,7 +117,7 @@ export const getDynamicAppWidgetCode = (group: 'offline' | 'online', persons: iP
 
   code = `var widget=${JSON.stringify(widget)};`
 
-  persons = persons.filter((p) => !p.excluded && p.sum && p.sum > 1)
+  persons = persons.filter((p) => !p.excluded && p.totalScore && p.totalScore > 1)
   console.log(`Show in widget ${persons.length}`)
   if (persons.length > 200) {
     persons = persons.slice(0, 200)
@@ -126,12 +126,12 @@ export const getDynamicAppWidgetCode = (group: 'offline' | 'online', persons: iP
 
   let persons_short = persons.map((p) => ({
     'p': p.place ? p.place : null,
-    'n': p.name ? p.name : null,
-    'sn': p.surname ? p.surname : null,
+    'n': p.firstName ? p.firstName : null,
+    'sn': p.lastName ? p.lastName : null,
     'id': p.vkID ? p.vkID : null,
     'b': p.badge ? p.badge : null,
-    't': p.team ? p.team : null,
-    's': p.sum ? p.sum : null,
+    't': p.numberOfTeam ? p.numberOfTeam : null,
+    's': p.totalScore ? p.totalScore : null,
   }))
   //   persons_short.push({ 'p': 15, 'n': 'Dmitry', 'sn': 'Pust', 'id': 52167654, 'b': 31, 't': 312, 's': 105 })
 

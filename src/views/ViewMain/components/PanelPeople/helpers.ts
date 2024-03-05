@@ -13,14 +13,14 @@ export const searchPersons = (p: { persons: iPerson[]; value: string }): iPerson
     localPersons = localPersons.filter(
       (person) =>
         p.value === '' ||
-        (person.name &&
-          person.surname &&
-          `${person.name} ${person.surname}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
-        (person.name &&
-          person.surname &&
-          `${person.surname} ${person.name}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
-        (person.name && !person.surname && `${person.name}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
-        (!person.name && person.surname && `${person.surname}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
+        (person.firstName &&
+          person.lastName &&
+          `${person.firstName} ${person.lastName}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
+        (person.firstName &&
+          person.lastName &&
+          `${person.lastName} ${person.firstName}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
+        (person.firstName && !person.lastName && `${person.firstName}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
+        (!person.firstName && person.lastName && `${person.lastName}`.toUpperCase().replaceAll('Ё', 'Е').includes(p.value)) ||
         (person.badge && `${person.badge}`.includes(p.value))
     )
   }
@@ -39,12 +39,12 @@ export const sortPersons = (p: { persons: iPerson[]; key: string; order: 1 | -1 
     let fieldA, fieldB: any
     switch (p.key) {
       case 'name':
-        fieldA = `${a.name} ${a.surname}`.toUpperCase()
-        fieldB = `${b.name} ${b.surname}`.toUpperCase()
+        fieldA = `${a.firstName} ${a.lastName}`.toUpperCase()
+        fieldB = `${b.firstName} ${b.lastName}`.toUpperCase()
         break
       case 'surname':
-        fieldA = `${a.surname} ${a.name}`.toUpperCase()
-        fieldB = `${b.surname} ${b.name}`.toUpperCase()
+        fieldA = `${a.lastName} ${a.firstName}`.toUpperCase()
+        fieldB = `${b.lastName} ${b.firstName}`.toUpperCase()
         break
       default:
         fieldA = _.get(a, p.key) || ''
