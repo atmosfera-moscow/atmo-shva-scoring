@@ -5,7 +5,7 @@ import { View } from '@vkontakte/vkui'
 import { FC, useState } from 'react'
 import { PanelPeople } from './components/PanelPeople'
 
-export const ViewMain: FC<iMainViewProps> = ({ curPerson, fetchedUser, scoringInfo, ...rest }) => {
+export const ViewMain: FC<iMainViewProps> = ({ curPerson, userInfo, scoringInfo, ...rest }) => {
   const [activePanel, setActivePanel] = useState<ePanelIds>(ePanelIds.People)
 
   return (
@@ -18,7 +18,7 @@ export const ViewMain: FC<iMainViewProps> = ({ curPerson, fetchedUser, scoringIn
       <PanelPeople
         id={ePanelIds.People}
         setActivePanel={setActivePanel}
-        fetchedUser={fetchedUser}
+        userInfo={userInfo}
         curPerson={curPerson}
         scoringInfo={scoringInfo}
       />

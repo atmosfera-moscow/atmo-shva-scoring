@@ -19,14 +19,9 @@ export interface iEspoCRMApiGetWhereParams {
   [key: string]: string[] | string | number | number[] | boolean
 }
 
-export interface iEspoCRMApiGetResponce<T> {
+export interface iEspoCRMApiGetListResponce<T> {
   total: number
   list: T[]
-}
-
-export interface iConfig {
-  isOnlineEnabled: boolean
-  isOfflineEnabled: boolean
 }
 
 export interface iMedal {
@@ -41,9 +36,7 @@ export interface iMedal {
   [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
-export interface iFormat {
-
-}
+export interface iFormat {}
 
 export interface iCRMUser {
   id: string
@@ -73,12 +66,43 @@ export interface iPerson {
   // [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
+export interface iLabel {
+  fields: {
+    [key: string]: string
+  }
+  links: {
+    [key: string]: string
+  }
+  labels: {
+    [key: string]: string
+  }
+  options: {
+    [key: string]: {
+      [key: string]: string
+    }
+  }
+}
+
+export interface iLabelList {
+  [key: string]: iLabel
+}
+
+export interface iConfig {
+  value: string | number | boolean | string[] | number[] | undefined | 'null'
+  key: string
+  [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
+}
+
 export interface iScoringInfo {
   medals: iMedal[]
-  persons: iPerson[] 
   onlinePersons: iPerson[]
   offlinePersons: iPerson[]
-  config: iConfig
+  isOnlineEnabled: boolean
+  isOfflineEnabled: boolean
+  labels: iLabel
+  scoringMax?: {
+    [key: string]: number
+  }[]
 }
 
 export interface iFilter {
@@ -91,8 +115,9 @@ export interface iSort {
   order: 1 | -1
 }
 
-export interface ExtendedUserInfo extends UserInfo {
-  isAtmoMember: boolean
+export interface iExtendedUserInfo extends UserInfo {
+  isAppAdmin: boolean
   isShvaParticipant: boolean
   isAppModerator: boolean
+  personInfo?: iPerson
 }

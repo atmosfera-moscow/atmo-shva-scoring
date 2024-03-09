@@ -11,27 +11,28 @@ import {
 } from '@vkontakte/vkui'
 import '@vkontakte/vkui/dist/vkui.css'
 import { FC, useEffect, useState } from 'react'
-import { getApiMedals, getApiParticipants } from './shared/api/espocrm'
-import { checkIsAtmoMember } from './shared/api/vkbridge'
+import { getApiScoringInfo, checkIsParticipant } from './shared/api/espocrm'
+import { checkIsAppAdmin, getUserInfo, checkIsAtmoMember } from './shared/api/vkbridge'
 import { eViewIds } from './shared/enums'
-import { ExtendedUserInfo, iConfig, iPerson, iScoringInfo } from './shared/types'
+import { iConfig, iExtendedUserInfo, iPerson, iScoringInfo } from './shared/types'
 // import { ViewBlock } from './views/ViewBlock'
 // import { ViewLoader } from './views/ViewLoader'
 // import { ViewMain } from './views/ViewMain'
-// import { ViewModerator } from './views/ViewModerator'
+// import { ViewAdmin } from './views/ViewAdmin'
 
 const App: FC = () => {
   const [appearance, setAppearance] = useState<AppearanceType>('dark')
   const [activeView, setActiveView] = useState<eViewIds>(eViewIds.Loader)
 
   const [scoringInfo, setScoringInfo] = useState<iScoringInfo>()
-  const [fetchedUser, setFetchedUser] = useState<ExtendedUserInfo>()
+  const [userInfo, setFetchedUser] = useState<iExtendedUserInfo>()
   const [config, setConfig] = useState<iConfig>()
   const [curPerson, setCurPerson] = useState<iPerson>()
 
   // const { sizeX } = useAdaptivityConditionalRender()
 
   useEffect(() => {
+    // TODO: mv to shared
     bridge.subscribe((res) => {
       if (res.detail.type === 'VKWebAppUpdateConfig') {
         setAppearance(res.detail.data.appearance)
@@ -41,53 +42,48 @@ const App: FC = () => {
     async function fetchData() {
       console.log(new Date().toTimeString(), 'App.fetchData hook called')
       try {
-        let fetchedUserToSet = {
-          ...(await bridge.send('VKWebAppGetUserInfo')),
-          isAtmoMember: false,
-          isAppModerator: false,
+        let userInfoToSet: iExtendedUserInfo = {
+          ...(await getUserInfo()),
           isAppAdmin: false,
+          isAppModerator: false,
           isShvaParticipant: false,
         }
 
-        if (!fetchedUserToSet) {
-          console.log(new Date().toTimeString(), 'Access denied 1')
+        if (!userInfoToSet) {
+          console.log(new Date().toTimeString(), 'Access denied: no userInfo')
           setActiveView(eViewIds.Block)
           return
         }
-        console.log(new Date().toTimeString(), 'Access allowed 1')
+        console.log(new Date().toTimeString(), 'Access allowed: userInfo')
 
-        const medals = await getApiMedals()
-        console.log({ medals })
-        const persons = await getApiParticipants()
-        console.log({ persons })
+        const isAppAdmin = await checkIsAppAdmin()
+        const isShvaParticipant = await checkIsParticipant(userInfoToSet.id)
+        const isAppModerator = await checkIsAtmoMember(userInfoToSet.id)
 
-        console.log(new Date().toTimeString(), 'getGsheetsData processed')
+        userInfoToSet = { ...userInfoToSet, isShvaParticipant, isAppAdmin, isAppModerator }
+        console.log(userInfoToSet)
 
-        // const isShvaParticipant = persons.map((p) => p.vkID).includes(fetchedUserToSet.id)
-        // const isAtmoMember = await checkIsAtmoMember(fetchedUserToSet.id)
-        // const isAppModerator = configToSet?.moderators.includes(fetchedUserToSet.id) || false
-        // const isAppAdmin = configToSet?.admins.includes(fetchedUserToSet.id) || false
-        // fetchedUserToSet = { ...fetchedUserToSet, isShvaParticipant, isAtmoMember, isAppModerator, isAppAdmin }
-        // console.log(fetchedUserToSet)
+        if (!(isAppModerator || isShvaParticipant)) {
+          console.log(new Date().toTimeString(), 'Access denied: not isAppModerator || isShvaParticipant')
+          setActiveView(eViewIds.Block)
+          return
+        }
+        console.log(new Date().toTimeString(), 'Access allowed: isAppModerator || isShvaParticipant')
 
-        // if (!scoringInfoToSet || !(isAtmoMember || isShvaParticipant)) {
-        //   console.log(new Date().toTimeString(), 'Access denied 2')
-        //   setActiveView(eViewIds.Block)
-        //   return
-        // }
-        // console.log(new Date().toTimeString(), 'Access allowed 1')
+        const scoringInfoToSet = await getApiScoringInfo()
+        console.log({ scoringInfoToSet })
 
-        // let curPersonToSet = persons.filter((person) => person.vkID === fetchedUserToSet?.id)[0] || undefined
+        // let curPersonToSet = persons.filter((person) => person.vkID === userInfoToSet?.id)[0] || undefined
 
         // setConfig(configToSet)
-        // setFetchedUser(fetchedUserToSet)
+        // setFetchedUser(userInfoToSet)
         // setCurPerson(curPersonToSet)
         // setScoringInfo(scoringInfoToSet)
 
         // console.log(new Date().toTimeString(), 'App.fetchData hook processed')
-        // if (fetchedUserToSet.isAppAdmin) {
+        // if (userInfoToSet.isAppAdmin) {
         //   console.log('Mode admin')
-        //   setActiveView(eViewIds.Moderator)
+        //   setActiveView(eViewIds.Admin)
         // } else {
         //   console.log('Mode user')
         //   setActiveView(eViewIds.Main)
@@ -111,15 +107,15 @@ const App: FC = () => {
                 <ViewBlock id={eViewIds.Block} />
                 <ViewNotLoaded id={eViewIds.NotLoaded} />
                 <ViewLoader id={eViewIds.Loader} />
-                <ViewModerator
+                <ViewAdmin
                   setActiveView={setActiveView}
-                  id={eViewIds.Moderator}
-                  fetchedUser={fetchedUser}
+                  id={eViewIds.Admin}
+                  userInfo={userInfo}
                   scoringInfo={scoringInfo!}
                 />
                 <ViewMain
                   id={eViewIds.Main}
-                  fetchedUser={fetchedUser}
+                  userInfo={userInfo}
                   curPerson={curPerson}
                   scoringInfo={scoringInfo!}
                 />

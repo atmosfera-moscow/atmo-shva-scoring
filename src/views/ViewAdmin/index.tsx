@@ -1,24 +1,24 @@
 import { getGroupToken } from '@src/shared/api/vkbridge'
 import { ePanelIds, eViewIds } from '@src/shared/enums'
-import { iModeratorViewProps } from '@views/types'
+import { iAdminViewProps } from '@views/types'
 import bridge from '@vkontakte/vk-bridge'
-import { Button, ButtonGroup, Div, Image, Panel, PanelHeader, PanelHeaderBack, Title, View } from '@vkontakte/vkui'
+import { Button, ButtonGroup, Div, Panel, PanelHeader, PanelHeaderBack, Title, View } from '@vkontakte/vkui'
 import { FC, useEffect, useState } from 'react'
 import { REACT_APP_VK_SHVA_GROUP_ID, REACT_APP_VK_SHVA_ONLINE_GROUP_ID } from '../../shared/consts'
 import './index.css'
-import { getAppWidgetCode, getDynamicAppWidgetCode } from './helpers'
+import { getDynamicAppWidgetCode } from './helpers'
 import { iPerson } from '@src/shared/types'
 
-export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, config, fetchedUser, ...rest }) => {
+export const ViewAdmin: FC<iAdminViewProps> = ({ setActiveView, scoringInfo, userInfo, ...rest }) => {
   const [isShvaButtonLoading, setIsShvaButtonLoading] = useState<boolean>(false)
   const [isShvaOnlineButtonLoading, setIisShvaOnlineButtonLoading] = useState<boolean>(false)
   useEffect(() => {
     // console.log({tableWidget})
-    console.log(new Date().toTimeString(), 'ViewModerator hook called')
-    if (!fetchedUser?.isAppModerator) {
+    console.log(new Date().toTimeString(), 'ViewAdmin hook called')
+    if (!userInfo?.isAppAdmin) {
       setActiveView(eViewIds.Main)
     }
-    console.log(new Date().toTimeString(), 'ViewModerator hook ended')
+    console.log(new Date().toTimeString(), 'ViewAdmin hook ended')
   }, [])
 
   const updateAppWidget = async (group: 'offline' | 'online' = 'offline', mode: 'set' | 'del' = 'set') => {
@@ -29,12 +29,12 @@ export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, config, 
       case 'offline':
         groupId = REACT_APP_VK_SHVA_GROUP_ID
         loadingButtonFun = setIsShvaButtonLoading
-        persons = scoringInfo.offline.persons
+        persons = scoringInfo.offlinePersons
         break
       case 'online':
         groupId = REACT_APP_VK_SHVA_ONLINE_GROUP_ID
         loadingButtonFun = setIisShvaOnlineButtonLoading
-        persons = scoringInfo.online.persons
+        persons = scoringInfo.onlinePersons
         break
     }
     loadingButtonFun(true)
@@ -67,8 +67,8 @@ export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, config, 
   }
 
   return (
-    <View activePanel={eViewIds.Moderator} {...rest}>
-      <Panel id={ePanelIds.Moderator}>
+    <View activePanel={eViewIds.Admin} {...rest}>
+      <Panel id={ePanelIds.Admin}>
         <PanelHeader delimiter="none" before={<PanelHeaderBack onClick={() => setActiveView(eViewIds.Main)} />}>
           Для админов
         </PanelHeader>
@@ -81,7 +81,7 @@ export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, config, 
               // stretched={true}
               mode="primary"
               loading={isShvaButtonLoading}
-              disabled={!config.offline.enable}
+              disabled={!scoringInfo.isOfflineEnabled}
             >
               Обновить виджет
             </Button>
@@ -103,7 +103,7 @@ export const ViewModerator: FC<iModeratorViewProps> = ({ setActiveView, config, 
               appearance="positive"
               mode="primary"
               loading={isShvaOnlineButtonLoading}
-              disabled={!scoringInfo.online.enable}
+              disabled={!scoringInfo.isOnlineEnabled}
             >
               Обновить виджет
             </Button>

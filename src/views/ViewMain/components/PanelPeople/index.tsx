@@ -28,13 +28,7 @@ import { CHUNK_SIZE } from './consts'
 import { searchPersons, shiftCurPerson, sortPersons } from './helpers'
 import './index.css'
 
-export const PanelPeople: FC<iPeoplePanelProps> = ({
-  fetchedUser,
-  curPerson,
-  setActivePanel,
-  scoringInfo,
-  ...rest
-}) => {
+export const PanelPeople: FC<iPeoplePanelProps> = ({ userInfo, curPerson, setActivePanel, scoringInfo, ...rest }) => {
   const [tabbarItemId, setTabbarItemId] = useState<eTabbarItemIds>(curPerson?.eduFormat || eTabbarItemIds.Offline)
   const [format, setFormat] = useState<iFormat>()
   const [peopleSearch, setPeopleSearch] = useState<string>('')
@@ -209,7 +203,7 @@ export const PanelPeople: FC<iPeoplePanelProps> = ({
     <Panel {...rest}>
       {panelHeader}
       <Spacing size={100} />
-      {(format) || fetchedUser?.isAppModerator ? content : updating}
+      {format || userInfo?.isAppAdmin ? content : updating}
       <Spacing size={60} />
       {panelFooter}
     </Panel>
