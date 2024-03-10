@@ -1,5 +1,5 @@
-import { UserInfo } from '@vkontakte/vk-bridge'
-import { eTabbarItemIds } from './enums'
+import { GetLaunchParamsResponse, UserInfo } from '@vkontakte/vk-bridge'
+import { eEduFormats } from './enums'
 
 export interface iEspoCRMApiPostPayload {
   [key: string]: string[] | string | number | number[] | boolean
@@ -36,18 +36,21 @@ export interface iMedal {
   [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
-export interface iFormat {}
-
 export interface iCRMUser {
   id: string
-  key: string
+  vkID: number
+  [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
+}
+
+export interface iTeam {
+  id: string
+  shvaTeamNumber: number | undefined
   [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
 export interface iPerson {
   id: string
-  // TODO: rm
-  place: number
+  place?: number
   sex: 'Ж' | 'М'
   photo?: string
   vkID: number
@@ -58,12 +61,21 @@ export interface iPerson {
   shvaScroingMedalsDynamic?: string
   shvaScroingMedalsStatic?: string
   badge?: number | string
-  numberOfTeam?: string
+  shvaTeamId: string | undefined
+  shvaTeamName: string | undefined
+  shvaTeamNumber?: number
   message?: string
-  eduFormat: eTabbarItemIds
+  eduFormat: eEduFormats
   totalScore: number
+  totalScoreActivity: number
+  totalScoreEdu: number
+  totalScoreGames: number
+  totalScoreMulct: number
+  totalScoreOpt: number
+  totalScoreOrg: number
+  totalScoreProblems: number
   excluded: boolean
-  // [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
+  [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
 export interface iLabel {
@@ -116,8 +128,9 @@ export interface iSort {
 }
 
 export interface iExtendedUserInfo extends UserInfo {
+  launchParams: GetLaunchParamsResponse
   isAppAdmin: boolean
   isShvaParticipant: boolean
   isAppModerator: boolean
-  personInfo?: iPerson
+  curPerson?: iPerson
 }

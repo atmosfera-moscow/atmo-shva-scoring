@@ -1,5 +1,5 @@
 import { getGroupToken } from '@src/shared/api/vkbridge'
-import { ePanelIds, eViewIds } from '@src/shared/enums'
+import { eViewIds } from '@views/enums'
 import { iAdminViewProps } from '@views/types'
 import bridge from '@vkontakte/vk-bridge'
 import { Button, ButtonGroup, Div, Panel, PanelHeader, PanelHeaderBack, Title, View } from '@vkontakte/vkui'
@@ -68,7 +68,7 @@ export const ViewAdmin: FC<iAdminViewProps> = ({ setActiveView, scoringInfo, use
 
   return (
     <View activePanel={eViewIds.Admin} {...rest}>
-      <Panel id={ePanelIds.Admin}>
+      <Panel id={eViewIds.Admin}>
         <PanelHeader delimiter="none" before={<PanelHeaderBack onClick={() => setActiveView(eViewIds.Main)} />}>
           Для админов
         </PanelHeader>

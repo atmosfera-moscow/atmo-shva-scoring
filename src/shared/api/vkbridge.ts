@@ -1,9 +1,9 @@
-import { REACT_APP_APP_ID, REACT_APP_VK_ATMOMY_GROUP_ID } from '@src/shared/consts'
+import { REACT_APP_VK_MINIAPP_ID, REACT_APP_VK_ATMOMY_GROUP_ID } from '@src/shared/consts'
 import bridge, { GetLaunchParamsResponse, UserInfo } from '@vkontakte/vk-bridge'
 
 export const getAccessToken = async (): Promise<string> => {
   const { access_token } = await bridge.send('VKWebAppGetAuthToken', {
-    app_id: REACT_APP_APP_ID,
+    app_id: REACT_APP_VK_MINIAPP_ID,
     scope: '',
   })
   return access_token
@@ -13,20 +13,19 @@ export const bridgeInit = async (): Promise<void> => {
   await bridge.send('VKWebAppInit')
 }
 
-
 export const getLaunchParams = async (): Promise<GetLaunchParamsResponse> => {
   const launchParams = await bridge.send('VKWebAppGetLaunchParams')
   return launchParams
 }
 
-export const checkIsAppAdmin = async (): Promise<boolean> => {
-  // TODO: fix
-  // const { vk_testing_group_id } = await bridge.send('VKWebAppGetLaunchParams')
-  const details = await bridge.send('VKWebAppGetLaunchParams')
-  console.log({details})
-  let vk_testing_group_id = ""
-  return vk_testing_group_id !== undefined
-}
+// export const checkIsAppAdmin = async (): Promise<boolean> => {
+//   // TODO: fix
+//   // const { vk_testing_group_id } = await bridge.send('VKWebAppGetLaunchParams')
+//   const details = await bridge.send('VKWebAppGetLaunchParams')
+//   console.log({ details })
+//   let vk_testing_group_id = ''
+//   return vk_testing_group_id !== undefined
+// }
 
 export const getPhotoUrls = async (ids: (number | undefined)[]): Promise<{ photo: string; id: number }[]> => {
   // console.log({ ids })
@@ -68,7 +67,7 @@ export const getUserInfo = async (): Promise<UserInfo> => {
 
 export const getGroupToken = async (groupId: number): Promise<string> => {
   const { access_token } = await bridge.send('VKWebAppGetCommunityToken', {
-    app_id: REACT_APP_APP_ID,
+    app_id: REACT_APP_VK_MINIAPP_ID,
     group_id: groupId,
     scope: 'app_widget',
   })

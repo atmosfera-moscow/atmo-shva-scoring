@@ -1,25 +1,24 @@
 import './index.css'
-import { ePanelIds } from '@src/shared/enums'
+import { ePanelIds } from './enums'
 import { iMainViewProps } from '@views/types'
 import { View } from '@vkontakte/vkui'
 import { FC, useState } from 'react'
-import { PanelPeople } from './components/PanelPeople'
+import { PanelPersons } from './PanelPersons'
 
-export const ViewMain: FC<iMainViewProps> = ({ curPerson, userInfo, scoringInfo, ...rest }) => {
-  const [activePanel, setActivePanel] = useState<ePanelIds>(ePanelIds.People)
+export const ViewMain: FC<iMainViewProps> = ({ userInfo, scoringInfo, ...rest }) => {
+  const [activePanel, setActivePanel] = useState<ePanelIds>(ePanelIds.Persons)
 
   return (
     <View
       className="view-main"
       activePanel={activePanel}
       {...rest}
-      onSwipeBack={() => setActivePanel(ePanelIds.People)}
+      onSwipeBack={() => setActivePanel(ePanelIds.Persons)}
     >
-      <PanelPeople
-        id={ePanelIds.People}
+      <PanelPersons
+        id={ePanelIds.Persons}
         setActivePanel={setActivePanel}
         userInfo={userInfo}
-        curPerson={curPerson}
         scoringInfo={scoringInfo}
       />
     </View>

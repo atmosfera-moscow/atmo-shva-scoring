@@ -1,4 +1,4 @@
-.view-notloaded__content {
+.view-error__content {
   display: flex;
   position: fixed;
   flex-direction: column;
@@ -9,11 +9,11 @@
   width: 100%;
   background: var(--vkui--color_background_content);
 }
-.view-notloaded__content-text {
+.view-error__content-text {
   text-align: center;
   margin: 0px auto;
 }
-.view-notloaded__image {
+.view-error__image {
   margin: 0px auto;
   /* width: 20vh; */
   max-width: 300px;
