@@ -4,8 +4,16 @@ import { FC, ReactElement, useEffect, useState } from 'react'
 import './index.css'
 import { iPersonCardProps } from './types'
 import { contentMainInfoKeys } from './consts'
+import SVG from 'react-inlinesvg'
 
-export const PersonCard: FC<iPersonCardProps> = ({ person, isCardsCollapsed, isCurPerson, labels, medals }) => {
+export const PersonCard: FC<iPersonCardProps> = ({
+  person,
+  isCardsCollapsed,
+  isCurPerson,
+  labels,
+  medals,
+  userInfo,
+}) => {
   const [isCardCollapsed, setIsCardCollapsed] = useState<boolean>(isCardsCollapsed)
   useEffect(() => {
     setIsCardCollapsed(isCardsCollapsed)
@@ -28,97 +36,115 @@ export const PersonCard: FC<iPersonCardProps> = ({ person, isCardsCollapsed, isC
   }
 
   const getContentMainInfo = (): ReactElement | undefined => {
-    const rows = contentMainInfoKeys.map((key) => (
-      <InfoRow key={key} header={labels.fields[key]}>
-        {person[key]}
-      </InfoRow>
-    ))
+    const rows: ReactElement[] = []
+    if (isCurPerson || userInfo.isAppModerator) {
+      let key = 'message'
+      let title = labels.find((l) => l.field === key)!.title
+      let value = person[key]
+      if (value) {
+        rows.push(
+          <InfoRow key={key} className="infoRow-sub" header={`${title}:`}>
+            {value}
+          </InfoRow>
+        )
+      }
+    }
+    contentMainInfoKeys.forEach((key) => {
+      if (person[key]) {
+        const title = labels.find((l) => l.field === key)!.title
+        rows.push(
+          <InfoRow key={key} className="infoRow-sub" header={`${title}:`}>
+            {person[key]}
+          </InfoRow>
+        )
+      }
+    })
 
     return <>{rows}</>
   }
   const contentMainInfo = getContentMainInfo()
 
-  const getContentSubInfo = (): ReactElement | undefined => {
-    // let  contentInfoKeys = []
-    // contentInfoKeys = contentInfoKeys
-    // .filter((key) => (person[key] || person[key] === 0) && scoringMeta[key].title_ru)
-    // .map((key) => {
-    //   const value = person[key]
-    //   const title_ru = scoringMeta[key].title_ru
-    //   const max_score = scoringMeta[key].max_score
-    //   const subLevel = key.split('_').length - 1
+  const getContentSubInfo = (): ReactElement => {
+    const localContentSubInfo: ReactElement[] = []
+    labels.forEach((label) => {
+      if (label.isContentSubInfoKey) {
+        const key = label.field
+        const limit = label.limit
+        const value = person[key]
+        let title = label.levelLast
+        const level = label.level
 
-    //   if (value!.toString().length <= 10) {
-    //     if (subLevel === 0) {
-    //       return (
-    //         <InfoRow key={key} header="">
-    //           <b>{`${title_ru}: ${value}${max_score ? ' из ' + max_score.toString() : ''}`}</b>
-    //         </InfoRow>
-    //       )
-    //     } else {
-    //       return (
-    //         <InfoRow
-    //           key={key}
-    //           style={{ paddingLeft: `${(subLevel - 1) * 10}px` }}
-    //           className="infoRow-sub"
-    //           header=""
-    //         >{`${subLevel > 1 ? '◦' : '•'} ${title_ru}: ${value}${
-    //           max_score ? ' из ' + max_score.toString() : ''
-    //         }`}</InfoRow>
-    //       )
-    //     }
-    //   }
-    //   return (
-    //     <InfoRow key={key} header={`${title_ru}:`}>
-    //       {value}
-    //     </InfoRow>
-    //   )
-    // })
-    return
+        if (value) {
+          if (level === 0) {
+            localContentSubInfo.push(
+              <InfoRow key={key} header="">
+                <b>{`${title}: ${value}${limit ? ` из ${limit}` : ''}`}</b>
+              </InfoRow>
+            )
+          } else {
+            localContentSubInfo.push(
+              <InfoRow key={key} style={{ paddingLeft: `${(level - 1) * 10}px` }} className="infoRow-sub" header="">
+                {`${level > 1 ? '◦' : '•'} ${title}: ${value}${limit ? ` из ${limit}` : ''}`}
+              </InfoRow>
+            )
+          }
+        }
+      }
+    })
+    return <>{localContentSubInfo}</>
   }
   const contentSubInfo = getContentSubInfo()
 
-  // const medalsRow = (
-  //   <>
-  //     {person.medals && person.medals.length > 0 && (
-  //       <div className="person-card__header-medals">
-  //         {pMedalsMeta.map((medalMeta) => (
-  //           <>"medalsImagesRow[medalMeta.key]"</>
-  //         ))}
-  //       </div>
-  //     )}
-  //   </>
-  // )
+  const getMedalsRow = (): ReactElement | undefined => {
+    if (!person.medals || !person.medals.length) {
+      return undefined
+    }
+    const style = { width: 16, height: 16, padding: 3 }
+    const medalsRowLocal: ReactElement[] = []
+    person.medals.forEach((medalId) => {
+      const medalInfo = medals.find((mi) => mi.id === medalId)
+      if (medalInfo) {
+        medalsRowLocal.push(<SVG src={medalInfo.iconSvg} style={style}></SVG>)
+      }
+    })
+    return <div className="person-card__header-medals">{medalsRowLocal}</div>
+  }
+  const medalsRow = getMedalsRow()
 
-  // const medalsHistory = (
-  //   <>
-  //     {person.medals && person.medals.length > 0 && (
-  //       <>
-  //         <InfoRow header={''}>
-  //           <b>Достижения:</b>
-  //         </InfoRow>
-  //         <div className="person-card__content-medals-list">
-  //           {pMedalsMeta.map((medalMeta) => {
-  //             const medalKey = medalMeta.key
-  //             const { title_female, title_male, descr } = medalMeta
-  //             const title = person.sex === 'Ж' ? title_female : title_male
-  //             const image = 'medalsImagesHistory[medalKey]'
-  //             return (
-  //               <div className="person-card__content-medals-medal" key={medalKey}>
-  //                 <>
-  //                   {image}
-  //                   <span className="person-card__content-medals-medal-title">
-  //                     {title} <span className="person-card__content-medals-medal-subtitle">{descr}</span>
-  //                   </span>
-  //                 </>
-  //               </div>
-  //             )
-  //           })}
-  //         </div>
-  //       </>
-  //     )}
-  //   </>
-  // )
+  const getMedalsHistory = (): ReactElement | undefined => {
+    if (!person.medals || !person.medals.length) {
+      return undefined
+    }
+    const style = { width: 16, height: 16, padding: 3 }
+    const medalsHistoryLocal: ReactElement[] = []
+    person.medals.forEach((medalId) => {
+      const medalInfo = medals.find((mi) => mi.id === medalId)
+      if (medalInfo) {
+        const title = person.sex === 'Ж' ? medalInfo.titleFemale : medalInfo.titleMale
+        const image = medalInfo.iconSvg
+        medalsHistoryLocal.push(
+          <div className="person-card__content-medals-medal" key={medalId}>
+            <>
+              <SVG src={image} style={style}></SVG>
+              <span className="person-card__content-medals-medal-title">
+                {title} <span className="person-card__content-medals-medal-subtitle">{medalInfo.description}</span>
+              </span>
+            </>
+          </div>
+        )
+      }
+    })
+
+    return (
+      <>
+        <InfoRow header={''}>
+          <b>Достижения:</b>
+        </InfoRow>
+        <div className="person-card__content-medals-list">{medalsHistoryLocal}</div>
+      </>
+    )
+  }
+  const medalsHistory = getMedalsHistory()
 
   const cardHeader = (
     <div className="person-card__header-container">
@@ -133,14 +159,14 @@ export const PersonCard: FC<iPersonCardProps> = ({ person, isCardsCollapsed, isC
       </Avatar>
       <div className="person-card__header">
         <div className="person-card__header-title">
-          <Title level="3">{`${person.firstName}${person.lastName}`}</Title>
+          <Title level="3">{`${person.firstName} ${person.lastName}`}</Title>
           {isCurPerson && <Subhead className="person-card__header-title-star">⭐</Subhead>}
           {person.excluded && (
             <Badge className="person-card__header-title-badge" mode="prominent" aria-label="Исключён" />
           )}
         </div>
         {getHeaderSubtitles()}
-        {/* {isCardCollapsed && medalsRow} */}
+        {isCardCollapsed && medalsRow !== undefined && medalsRow}
       </div>
       {isCardCollapsed ? (
         <Icon24ChevronDown className="person-card__header-button-expand" />
@@ -165,7 +191,7 @@ export const PersonCard: FC<iPersonCardProps> = ({ person, isCardsCollapsed, isC
           <Badge className="person-card__header-title-badge" mode="prominent" aria-label="Исключён" />
         </div>
       )}
-      {/* {medalsHistory} */}
+      {medalsHistory}
       {contentMainInfo}
       {contentSubInfo}
     </>

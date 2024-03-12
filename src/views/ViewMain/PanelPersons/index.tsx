@@ -195,6 +195,7 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
                 key={`${index} ${person.vkID}`}
                 person={person}
                 isCurPerson={person === curPerson}
+                userInfo={userInfo}
                 isCardsCollapsed={isPersonsCardsCollapsed}
                 labels={scoringInfo.labels}
                 medals={scoringInfo.medals}
@@ -219,7 +220,7 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
     <Panel {...rest}>
       {panelHeader}
       <Spacing size={100} />
-      {isFormatEnabled || userInfo.isAppAdmin ? content : updating}
+      {isFormatEnabled || userInfo.isAppModerator ? content : updating}
     </Panel>
   )
 }

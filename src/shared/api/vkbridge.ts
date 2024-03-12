@@ -18,15 +18,6 @@ export const getLaunchParams = async (): Promise<GetLaunchParamsResponse> => {
   return launchParams
 }
 
-// export const checkIsAppAdmin = async (): Promise<boolean> => {
-//   // TODO: fix
-//   // const { vk_testing_group_id } = await bridge.send('VKWebAppGetLaunchParams')
-//   const details = await bridge.send('VKWebAppGetLaunchParams')
-//   console.log({ details })
-//   let vk_testing_group_id = ''
-//   return vk_testing_group_id !== undefined
-// }
-
 export const getPhotoUrls = async (ids: (number | undefined)[]): Promise<{ photo: string; id: number }[]> => {
   // console.log({ ids })
   let result = await bridge.send('VKWebAppCallAPIMethod', {
@@ -34,7 +25,7 @@ export const getPhotoUrls = async (ids: (number | undefined)[]): Promise<{ photo
     params: {
       user_ids: ids.join(','),
       fields: 'photo_max,has_photo',
-      v: '5.131',
+      v: '5.199',
       access_token: await getAccessToken(),
     },
   })
@@ -53,7 +44,7 @@ export const checkIsAtmoMember = async (vkId: number): Promise<boolean> => {
     method: 'groups.getMembers',
     params: {
       group_id: REACT_APP_VK_ATMOMY_GROUP_ID,
-      v: '5.131',
+      v: '5.199',
       access_token: await getAccessToken(),
     },
   })

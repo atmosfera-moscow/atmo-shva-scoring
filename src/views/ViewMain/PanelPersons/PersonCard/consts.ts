@@ -1,9 +1,2 @@
-export const contentMainInfoKeys = [
-  'totalScoreActivity',
-  'totalScoreEdu',
-  'totalScoreGames',
-  'totalScoreMulct',
-  'totalScoreOpt',
-  'totalScoreOrg',
-  'totalScoreProblems',
-]
+export const contentMainInfoKeys = []
+

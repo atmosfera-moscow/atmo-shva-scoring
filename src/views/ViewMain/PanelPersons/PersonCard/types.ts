@@ -1,12 +1,11 @@
-import { iLabel, iMedal, iPerson } from "@src/shared/types"
+import { iExtendedUserInfo, iLabel, iMedal, iPerson } from "@src/shared/types"
 
 export interface iPersonCardProps {
     person: iPerson
     isCardsCollapsed: boolean
     isCurPerson: boolean
-    // scoringMeta: iScoringMeta
-    labels: iLabel
+    labels: iLabel[]
     medals: iMedal[]
-    // scoringMax?: number[]
+    userInfo: iExtendedUserInfo
   }
   

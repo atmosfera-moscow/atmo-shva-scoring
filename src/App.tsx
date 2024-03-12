@@ -51,7 +51,7 @@ const App: FC = () => {
 
         if (!userInfoToSet) {
           console.log(new Date().toTimeString(), 'Access denied: no userInfo')
-          setErrorMessage(`Access denied: no userInfo featched ${userInfoToSet}`)
+          setErrorMessage(`Access denied: no userInfo featched ${JSON.stringify(userInfoToSet)}`)
           setActiveView(eViewIds.Error)
           return
         }
@@ -83,15 +83,15 @@ const App: FC = () => {
         setScoringInfo(scoringInfoToSet)
 
         console.log(new Date().toTimeString(), 'App.fetchData hook processed')
-        if (userInfoToSet.isAppAdmin) {
-          console.log('Mode admin')
-          setActiveView(eViewIds.Admin)
-        } else {
-          console.log('Mode user')
-          setActiveView(eViewIds.Main)
-        }
+        // if (userInfoToSet.isAppAdmin) {
+        //   console.log('Mode admin')
+        //   setActiveView(eViewIds.Admin)
+        // } else {
+        console.log('Mode user')
+        setActiveView(eViewIds.Main)
+        // }
       } catch (error) {
-        const errorMessageToSet = `App.fetchData hook error ${error}`
+        const errorMessageToSet = `App.fetchData hook error ${JSON.stringify(error)}`
         console.log(new Date().toTimeString(), errorMessageToSet)
         setErrorMessage(errorMessageToSet)
         setActiveView(eViewIds.Error)

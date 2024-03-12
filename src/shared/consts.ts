@@ -14,10 +14,25 @@ export const REACT_APP_CRM_API_SHVA_CONFIG_ENTITY = process.env.REACT_APP_CRM_AP
 export const REACT_APP_CRM_API_LABELS_ENTITY = process.env.REACT_APP_CRM_API_LABELS_ENTITY || ''
 export const REACT_APP_CRM_API_USERS_ENTITY = process.env.REACT_APP_CRM_API_USERS_ENTITY || ''
 
-
-
 export const REACT_APP_SHVA_GROUP_TOKEN = process.env.REACT_APP_SHVA_GROUP_TOKEN
 export const REACT_APP_SHVA_ONLINE_GROUP_TOKEN = process.env.REACT_APP_SHVA_ONLINE_GROUP_TOKEN
 export const REACT_APP_VK_ATMOMY_GROUP_ID = parseInt(process.env.REACT_APP_VK_ATMOMY_GROUP_ID || '')
 export const REACT_APP_VK_SHVA_GROUP_ID = parseInt(process.env.REACT_APP_VK_SHVA_GROUP_ID || '')
 export const REACT_APP_VK_SHVA_ONLINE_GROUP_ID = parseInt(process.env.REACT_APP_VK_SHVA_ONLINE_GROUP_ID || '')
+
+export const contentSubInfoKeys = [
+  { re: /^Н[1-9]$/i },
+  { re: /^Н[1-9] \| Занятие$/i },
+  { re: /^Н[1-9] \| Занятие \| Активность$/i, limit: 4 },
+  { re: /^Н[1-9] \| Занятие \| Учеба$/i, limit: 10 },
+  { re: /^Н[1-9] \| Занятие \| Игротека$/i, limit: 5 },
+  { re: /^Н[1-9] \| Занятие \| Заморочки$/i, limit: 3 },
+  { re: /^Н[1-9] \| Балл от организаторов$/i, limit: 1 },
+  { re: /^Н[1-9] \| Штраф$/i },
+  { re: /^Н[1-9] \| Факультатив \d \| Игротека$/i, limit: 5 },
+  { re: /^Н[1-9] \| Факультатив \d \| Активность$/i, limit: 3 },
+  { re: /^Н[1-9] \| Образовалка$/i },
+  { re: /^Н[1-9] \| Образовалка \| Тест .*$/i, limit: 3 },
+]
+
+export const relatedFieldsParticipants = ['shvaScroingMedalsStaticIds', 'shvaScroingMedalsDymanicIds']

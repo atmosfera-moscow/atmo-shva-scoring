@@ -1,5 +1,6 @@
 import { GetLaunchParamsResponse, UserInfo } from '@vkontakte/vk-bridge'
 import { eEduFormats } from './enums'
+import { ReactElement } from 'react'
 
 export interface iEspoCRMApiPostPayload {
   [key: string]: string[] | string | number | number[] | boolean
@@ -32,8 +33,9 @@ export interface iMedal {
   description: string
   disabled: boolean
   limit?: number
+  iconSvg: string
   type: 'dynamic' | 'static'
-  [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
+  [key: string]: string | number | boolean | string[] | number[] | undefined | ReactElement | 'null'
 }
 
 export interface iCRMUser {
@@ -57,9 +59,9 @@ export interface iPerson {
   firstName: string
   lastName: string
   // TODO: rm
-  medals: string[]
-  shvaScroingMedalsDynamic?: string
-  shvaScroingMedalsStatic?: string
+  medals?: string[]
+  shvaScroingMedalsStaticIds?: string[]
+  shvaScroingMedalsDynamicIds?: string[]
   badge?: number | string
   shvaTeamId: string | undefined
   shvaTeamName: string | undefined
@@ -79,6 +81,18 @@ export interface iPerson {
 }
 
 export interface iLabel {
+  field: string
+  title: string
+  level: number
+  level1: string
+  level2: string
+  level3: string
+  levelLast: string
+  limit?: number
+  isContentSubInfoKey: boolean
+}
+
+export interface iLabelDTO {
   fields: {
     [key: string]: string
   }
@@ -95,8 +109,8 @@ export interface iLabel {
   }
 }
 
-export interface iLabelList {
-  [key: string]: iLabel
+export interface iLabelListDTO {
+  [key: string]: iLabelDTO
 }
 
 export interface iConfig {
@@ -111,7 +125,7 @@ export interface iScoringInfo {
   offlinePersons: iPerson[]
   isOnlineEnabled: boolean
   isOfflineEnabled: boolean
-  labels: iLabel
+  labels: iLabel[]
   scoringMax?: {
     [key: string]: number
   }[]
