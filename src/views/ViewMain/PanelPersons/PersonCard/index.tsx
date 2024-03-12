@@ -120,7 +120,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
     person.medals.forEach((medalId) => {
       const medalInfo = medals.find((mi) => mi.id === medalId)
       if (medalInfo) {
-        const title = person.sex === 'Ж' ? medalInfo.titleFemale : medalInfo.titleMale
+        const title = person.vkSex === 'Ж' ? medalInfo.titleFemale : medalInfo.titleMale
         const image = medalInfo.iconSvg
         medalsHistoryLocal.push(
           <div className="person-card__content-medals-medal" key={medalId}>
@@ -186,7 +186,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
       {person.excluded && (
         <div className="person-card__content-excluded">
           <InfoRow header={''}>
-            <b>{person.sex === 'Ж' ? 'Исключена' : 'Исключён'}</b>
+            <b>{person.vkSex === 'Ж' ? 'Исключена' : 'Исключён'}</b>
           </InfoRow>
           <Badge className="person-card__header-title-badge" mode="prominent" aria-label="Исключён" />
         </div>

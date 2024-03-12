@@ -1,3 +1,4 @@
+import { REACT_APP_VK_MINIAPP_LINK } from '@src/shared/consts'
 import { iPerson } from '@src/shared/types'
 
 export const getAppWidgetCode = (group: 'offline' | 'online', persons: iPerson[]): [string, string] => {
@@ -15,9 +16,9 @@ export const getAppWidgetCode = (group: 'offline' | 'online', persons: iPerson[]
   let date = new Date().toLocaleDateString()
   let code = {
     'title': `Топ ${shva_title} ШВА (${date})`,
-    'title_url': 'https://vk.com/app51552382',
+    'title_url': REACT_APP_VK_MINIAPP_LINK,
     'more': 'Смотреть полностью',
-    'more_url': 'https://vk.com/app51552382',
+    'more_url': REACT_APP_VK_MINIAPP_LINK,
     'head': [
       {
         'text': 'Участник',
@@ -59,7 +60,7 @@ export const getAppWidgetCode = (group: 'offline' | 'online', persons: iPerson[]
         'text': `${p.badge}`,
       },
       {
-        'text': `${p.numberOfTeam}`,
+        'text': `${p.shvaTeamNumber}`,
       },
       {
         'text': `${p.totalScore}`,
@@ -87,9 +88,9 @@ export const getDynamicAppWidgetCode = (group: 'offline' | 'online', persons: iP
   let date = new Date().toLocaleDateString()
   let widget = {
     'title': `Топ ${shva_title} ШВА (${date})`,
-    'title_url': 'https://vk.com/app51552382',
+    'title_url': REACT_APP_VK_MINIAPP_LINK,
     'more': 'Смотреть полностью',
-    'more_url': 'https://vk.com/app51552382',
+    'more_url': REACT_APP_VK_MINIAPP_LINK,
     'head': [
       {
         'text': 'Участник',
@@ -130,16 +131,13 @@ export const getDynamicAppWidgetCode = (group: 'offline' | 'online', persons: iP
     'sn': p.lastName ? p.lastName : null,
     'id': p.vkID ? p.vkID : null,
     'b': p.badge ? p.badge : null,
-    't': p.numberOfTeam ? p.numberOfTeam : null,
+    't': p.shvaTeamNumber ? p.shvaTeamNumber : null,
     's': p.totalScore ? p.totalScore : null,
   }))
-  //   persons_short.push({ 'p': 15, 'n': 'Dmitry', 'sn': 'Pust', 'id': 52167654, 'b': 31, 't': 312, 's': 105 })
 
   let persons_str = 'var persons_short=['
-  //   let persons_str = 'var persons_short=[];'
   persons_short.forEach((p, i) => {
     persons_str = `${persons_str} ${i % 2 === 1 ? '\n' : ''} ${JSON.stringify(p)},`
-    // persons_str = `${persons_str} ${i % 2 === 1 ? '\n' : ''} persons_short.push(${JSON.stringify(p)});`
   })
   persons_str = `${persons_str} \n ];`
 

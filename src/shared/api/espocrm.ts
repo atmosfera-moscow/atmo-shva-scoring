@@ -128,7 +128,6 @@ export const checkIsParticipant = async (vkId: number): Promise<boolean> => {
   const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_SHVA_PARTICIPANTS_ENTITY}?${params}`
   let persons = await getListEspoCRMApi<iPerson>(urlBase)
   console.log(new Date().toTimeString(), 'checkIsParticipant recieved')
-  // console.log(`checkIsParticipant ${persons}`)
 
   return persons.length > 0
 }
@@ -239,7 +238,7 @@ const getListEspoCRMApi = async <T>(
   while (!isEmptyNextResponce) {
     let CRMUrl = `${urlBase}?offset=${offset}&maxSize=${maxSize}`
     select && (CRMUrl = `${CRMUrl}&select=${select}`)
-    console.log(CRMUrl)
+    // console.log(CRMUrl)
     const { list } = await apiService.get<iEspoCRMApiGetListResponce<T>>(CRMUrl, { headers: headers })
     dataList.push(...list)
     offset += maxSize
@@ -257,7 +256,6 @@ const getEspoCRMApi = async <T>(urlBase: string): Promise<T> => {
   }
 
   const responce = await apiService.get<T>(urlBase, { headers: headers })
-
-  console.log({ responce })
+  // console.log({ responce })
   return responce
 }

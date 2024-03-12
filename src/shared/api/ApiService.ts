@@ -30,7 +30,7 @@ export class ApiService {
   private async http<T>(url: string, options?: AxiosRequestConfig): Promise<T> {
     const response = await axios(url, options)
     const result = await response.data
-    console.log({ result })
+    // console.log({ result })
     return result as unknown as T
   }
 }

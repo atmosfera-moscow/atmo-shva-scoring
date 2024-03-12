@@ -35,7 +35,7 @@ export interface iMedal {
   limit?: number
   iconSvg: string
   type: 'dynamic' | 'static'
-  [key: string]: string | number | boolean | string[] | number[] | undefined | ReactElement | 'null'
+  [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
 export interface iCRMUser {
@@ -53,7 +53,7 @@ export interface iTeam {
 export interface iPerson {
   id: string
   place?: number
-  sex: 'Ж' | 'М'
+  sex: 'Ж' | 'М' | 'M'
   photo?: string
   vkID: number
   firstName: string

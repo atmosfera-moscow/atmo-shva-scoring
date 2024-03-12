@@ -99,7 +99,7 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
     if (localScrollChunkNum * CHUNK_SIZE >= localShownPersons.length - 1) {
       setScrolledPersons(localShownPersons)
       setHasPersonsToScroll(false)
-      // console.log(localShownPersons)
+      // console.log({ localShownPersons })
     } else {
       const endIndex = localScrollChunkNum * CHUNK_SIZE
       setScrolledPersons(localShownPersons.slice(0, endIndex))

@@ -20,8 +20,7 @@ import { ViewAdmin } from '@views/ViewAdmin'
 import { ViewMain } from '@views/ViewMain'
 import { eViewIds } from '@views/enums'
 
-const App: FC = () => {
-  const [appearance, setAppearance] = useState<AppearanceType>('dark')
+export const App: FC = () => {
   const [activeView, setActiveView] = useState<eViewIds>(eViewIds.Loader)
 
   const [scoringInfo, setScoringInfo] = useState<iScoringInfo>()
@@ -31,13 +30,6 @@ const App: FC = () => {
   // const { sizeX } = useAdaptivityConditionalRender()
 
   useEffect(() => {
-    // TODO: mv to shared
-    bridge.subscribe((res) => {
-      if (res.detail.type === 'VKWebAppUpdateConfig') {
-        setAppearance(res.detail.data.appearance)
-      }
-    })
-
     async function fetchData() {
       console.log(new Date().toTimeString(), 'App.fetchData hook called')
       try {
@@ -71,25 +63,26 @@ const App: FC = () => {
         console.log(new Date().toTimeString(), 'Access allowed: isAppModerator || isShvaParticipant')
 
         const scoringInfoToSet = await getApiScoringInfo()
-        console.log({ scoringInfoToSet })
 
         userInfoToSet.curPerson =
           scoringInfoToSet.offlinePersons.find((person) => person.vkID === userInfoToSet.id) ||
           scoringInfoToSet.onlinePersons.find((person) => person.vkID === userInfoToSet.id)
 
-        console.log({ userInfoToSet })
+        // TODO: comment
+        // console.log({ scoringInfoToSet })
+        // console.log({ userInfoToSet })
 
         setUserInfo(userInfoToSet)
         setScoringInfo(scoringInfoToSet)
 
         console.log(new Date().toTimeString(), 'App.fetchData hook processed')
-        // if (userInfoToSet.isAppAdmin) {
-        //   console.log('Mode admin')
-        //   setActiveView(eViewIds.Admin)
-        // } else {
-        console.log('Mode user')
-        setActiveView(eViewIds.Main)
-        // }
+        if (userInfoToSet.isAppAdmin) {
+          console.log('Mode admin')
+          setActiveView(eViewIds.Admin)
+        } else {
+          console.log('Mode user')
+          setActiveView(eViewIds.Main)
+        }
       } catch (error) {
         const errorMessageToSet = `App.fetchData hook error ${JSON.stringify(error)}`
         console.log(new Date().toTimeString(), errorMessageToSet)
@@ -102,28 +95,22 @@ const App: FC = () => {
   }, [])
 
   return (
-    <ConfigProvider appearance={appearance}>
-      <AdaptivityProvider>
-        <AppRoot>
-          <SplitLayout>
-            <SplitCol>
-              <Root activeView={activeView}>
-                <ViewLoader id={eViewIds.Loader} />
-                <ViewError id={eViewIds.Error} errorMessage={errorMessage} />
-                <ViewBlock id={eViewIds.Block} userInfo={userInfo!} />
-                <ViewAdmin
-                  id={eViewIds.Admin}
-                  scoringInfo={scoringInfo!}
-                  userInfo={userInfo!}
-                  setActiveView={setActiveView}
-                />
-                <ViewMain id={eViewIds.Main} scoringInfo={scoringInfo!} userInfo={userInfo!} />
-              </Root>
-            </SplitCol>
-          </SplitLayout>
-        </AppRoot>
-      </AdaptivityProvider>
-    </ConfigProvider>
+    <SplitLayout>
+      <SplitCol>
+        <Root activeView={activeView}>
+          <ViewLoader id={eViewIds.Loader} />
+          <ViewError id={eViewIds.Error} errorMessage={errorMessage} />
+          <ViewBlock id={eViewIds.Block} userInfo={userInfo!} />
+          <ViewAdmin
+            id={eViewIds.Admin}
+            scoringInfo={scoringInfo!}
+            userInfo={userInfo!}
+            setActiveView={setActiveView}
+          />
+          <ViewMain id={eViewIds.Main} scoringInfo={scoringInfo!} userInfo={userInfo!} />
+        </Root>
+      </SplitCol>
+    </SplitLayout>
   )
 }
 

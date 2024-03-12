@@ -13,6 +13,7 @@
     "@types/react-dom": "18.2.19",
     "@vkontakte/icons": "^2.99.0",
     "@vkontakte/vk-bridge": "^2.14.1",
+    "@vkontakte/vk-bridge-react": "^1.0.1",
     "@vkontakte/vk-miniapps-deploy": "^0.1.6",
     "@vkontakte/vkjs": "^1.1.1",
     "@vkontakte/vkui": "^6.0.0",

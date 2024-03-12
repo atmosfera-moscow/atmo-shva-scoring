@@ -3,6 +3,7 @@ export const WARNING_GRADIENT = 'linear-gradient(90deg, #ffb73d 0%, #ffa000 100%
 
 // .env block
 export const REACT_APP_VK_MINIAPP_ID = parseInt(process.env.REACT_APP_VK_MINIAPP_ID || '')
+export const REACT_APP_VK_MINIAPP_LINK = process.env.REACT_APP_VK_MINIAPP_LINK || ''
 
 export const REACT_APP_CRM_SITE = process.env.REACT_APP_CRM_SITE || ''
 export const REACT_APP_CRM_API = process.env.REACT_APP_CRM_API || ''
@@ -29,10 +30,11 @@ export const contentSubInfoKeys = [
   { re: /^Н[1-9] \| Занятие \| Заморочки$/i, limit: 3 },
   { re: /^Н[1-9] \| Балл от организаторов$/i, limit: 1 },
   { re: /^Н[1-9] \| Штраф$/i },
+  { re: /^Н[1-9] \| Факультатив \d$/i },
   { re: /^Н[1-9] \| Факультатив \d \| Игротека$/i, limit: 5 },
   { re: /^Н[1-9] \| Факультатив \d \| Активность$/i, limit: 3 },
   { re: /^Н[1-9] \| Образовалка$/i },
   { re: /^Н[1-9] \| Образовалка \| Тест .*$/i, limit: 3 },
 ]
 
-export const relatedFieldsParticipants = ['shvaScroingMedalsStaticIds', 'shvaScroingMedalsDymanicIds']
+export const relatedFieldsParticipants = ['shvaScroingMedalsStaticIds', 'shvaScroingMedalsDynamicIds']
