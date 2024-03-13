@@ -25,6 +25,7 @@ import {
   iScoringInfo,
   iCRMUser,
   iTeam,
+  iGetListEspoCRMApiParams,
 } from '../types'
 import apiService from './ApiService'
 import { getPhotoUrls } from './vkbridge'
@@ -41,7 +42,7 @@ export const getApiScoringInfo = async (): Promise<iScoringInfo> => {
     const pMedals: string[] = []
     p.shvaScroingMedalsStaticIds && pMedals.push(...p.shvaScroingMedalsStaticIds)
     p.shvaScroingMedalsDynamicIds && pMedals.push(...p.shvaScroingMedalsDynamicIds)
-    console.log(...pMedals)
+    // console.log(...pMedals)
     return {
       ...p,
       shvaTeamNumber: teams.find((t) => t.id === p.shvaTeamId)?.shvaTeamNumber,
@@ -124,9 +125,9 @@ export const checkIsParticipant = async (vkId: number): Promise<boolean> => {
       value: vkId,
     },
   ]
-  const params = `where%5B0%5D%5Btype%5D=equals&where%5B0%5D%5Battribute%5D=vkID&where%5B0%5D%5Bvalue%5D=${vkId}`
-  const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_SHVA_PARTICIPANTS_ENTITY}?${params}`
-  let persons = await getListEspoCRMApi<iPerson>(urlBase)
+  const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_SHVA_PARTICIPANTS_ENTITY}`
+  const otherParams = `where%5B0%5D%5Btype%5D=equals&where%5B0%5D%5Battribute%5D=vkID&where%5B0%5D%5Bvalue%5D=${vkId}`
+  let persons = await getListEspoCRMApi<iPerson>({ urlBase, otherParams })
   console.log(new Date().toTimeString(), 'checkIsParticipant recieved')
 
   return persons.length > 0
@@ -141,9 +142,9 @@ export const checkIsAppAdmin = async (vkId: number): Promise<boolean> => {
   //     value: vkId,
   //   },
   // ]
-  const params = `where%5B0%5D%5Btype%5D=linkedWith&where%5B0%5D%5Battribute%5D=teams&where%5B0%5D%5Bvalue%5D%5B%5D=65ca7982de804f874&where%5B1%5D%5Btype%5D=equals&where%5B1%5D%5Battribute%5D=vkID&where%5B1%5D%5Bvalue%5D=${vkId}`
-  const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_USERS_ENTITY}?${params}`
-  let persons = await getListEspoCRMApi<iCRMUser>(urlBase)
+  const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_USERS_ENTITY}`
+  const otherParams = `where%5B0%5D%5Btype%5D=linkedWith&where%5B0%5D%5Battribute%5D=teams&where%5B0%5D%5Bvalue%5D%5B%5D=65ca7982de804f874&where%5B1%5D%5Btype%5D=equals&where%5B1%5D%5Battribute%5D=vkID&where%5B1%5D%5Bvalue%5D=${vkId}`
+  let persons = await getListEspoCRMApi<iCRMUser>({ urlBase, otherParams })
   console.log(new Date().toTimeString(), 'checkIsAppAdmin recieved')
 
   return persons.length > 0
@@ -170,9 +171,11 @@ const getApiParticipants = async (): Promise<iPerson[]> => {
   const fields = await getApiParticipantsFields()
   fields.push(...relatedFieldsParticipants)
   const select = fields.join(',')
+  const orderBy = 'totalScore'
+  const order = 'desc'
   const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_SHVA_PARTICIPANTS_ENTITY}`
   console.log(new Date().toTimeString(), 'getCRMParticipants sent')
-  let persons = await getListEspoCRMApi<iPerson>(urlBase, select)
+  let persons = await getListEspoCRMApi<iPerson>({ urlBase, select, orderBy, order })
   console.log(new Date().toTimeString(), 'getCRMParticipants recieved')
 
   persons = await updatePhotos(persons)
@@ -184,7 +187,7 @@ const getApiParticipants = async (): Promise<iPerson[]> => {
 const getApiMedals = async (): Promise<iMedal[]> => {
   const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_SHVA_MEDALS_ENTITY}`
   console.log(new Date().toTimeString(), 'getApiMedals sent')
-  let medals = await getListEspoCRMApi<iMedal>(urlBase)
+  let medals = await getListEspoCRMApi<iMedal>({ urlBase })
   console.log(new Date().toTimeString(), 'getApiMedals recieved')
   return medals
 }
@@ -192,7 +195,7 @@ const getApiMedals = async (): Promise<iMedal[]> => {
 const getApiTeams = async (): Promise<iTeam[]> => {
   console.log(new Date().toTimeString(), 'getApiTeams sent')
   const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_SHVA_TEAMS_ENTITY}`
-  let teams = await getListEspoCRMApi<iTeam>(urlBase)
+  let teams = await getListEspoCRMApi<iTeam>({ urlBase })
   console.log(new Date().toTimeString(), 'getApiTeams recieved')
   return teams
 }
@@ -200,7 +203,7 @@ const getApiTeams = async (): Promise<iTeam[]> => {
 const getApiConfig = async (): Promise<iConfig[]> => {
   console.log(new Date().toTimeString(), 'getApiConfig sent')
   let urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_SHVA_CONFIG_ENTITY}`
-  const config = await getListEspoCRMApi<iConfig>(urlBase)
+  const config = await getListEspoCRMApi<iConfig>({ urlBase })
   console.log(new Date().toTimeString(), 'getApiConfig recieved')
   return config
 }
@@ -222,22 +225,31 @@ const updatePhotos = async (persons: iPerson[]): Promise<iPerson[]> => {
   return personsToSet
 }
 
-const getListEspoCRMApi = async <T>(
-  urlBase: string,
-  select: string | undefined = undefined,
+const getListEspoCRMApi = async <T>({
+  urlBase,
   maxSize = 200,
-  offset = 0
-): Promise<T[]> => {
+  offset = 0,
+  select,
+  orderBy,
+  order,
+  otherParams,
+}: iGetListEspoCRMApiParams): Promise<T[]> => {
   const headers = {
     'X-Api-Key': REACT_APP_CRM_API_TOKEN,
     'Content-Type': 'application/json',
     'X-No-Total': 'true',
   }
-  let isEmptyNextResponce = false
   let dataList: T[] = []
+  let isEmptyNextResponce = false
   while (!isEmptyNextResponce) {
-    let CRMUrl = `${urlBase}?offset=${offset}&maxSize=${maxSize}`
+    let CRMUrl = `${urlBase}?`
+    offset && (CRMUrl = `${CRMUrl}&offset=${offset}`)
+    maxSize && (CRMUrl = `${CRMUrl}&maxSize=${maxSize}`)
     select && (CRMUrl = `${CRMUrl}&select=${select}`)
+    orderBy && (CRMUrl = `${CRMUrl}&orderBy=${orderBy}`)
+    order && (CRMUrl = `${CRMUrl}&order=${order}`)
+    otherParams && (CRMUrl = `${CRMUrl}&${otherParams}`)
+
     // console.log(CRMUrl)
     const { list } = await apiService.get<iEspoCRMApiGetListResponce<T>>(CRMUrl, { headers: headers })
     dataList.push(...list)

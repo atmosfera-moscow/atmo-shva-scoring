@@ -9,9 +9,9 @@ export const getAccessToken = async (): Promise<string> => {
   return access_token
 }
 
-export const bridgeInit = async (): Promise<void> => {
-  await bridge.send('VKWebAppInit')
-}
+// export const bridgeInit = async (): Promise<void> => {
+//   await bridge.send('VKWebAppInit')
+// }
 
 export const getLaunchParams = async (): Promise<GetLaunchParamsResponse> => {
   const launchParams = await bridge.send('VKWebAppGetLaunchParams')
@@ -40,15 +40,26 @@ export const getPhotoUrls = async (ids: (number | undefined)[]): Promise<{ photo
 }
 
 export const checkIsAtmoMember = async (vkId: number): Promise<boolean> => {
-  const { response } = await bridge.send('VKWebAppCallAPIMethod', {
-    method: 'groups.getMembers',
-    params: {
-      group_id: REACT_APP_VK_ATMOMY_GROUP_ID,
-      v: '5.199',
-      access_token: await getAccessToken(),
-    },
-  })
-  const atmoMembers: number[] = response.items
+  const atmoMembers: number[] = []
+  let offset = 0
+  const count = 1000
+  let isEmptyNextResponce = false
+  while (!isEmptyNextResponce) {
+    const { response } = await bridge.send('VKWebAppCallAPIMethod', {
+      method: 'groups.getMembers',
+      params: {
+        group_id: REACT_APP_VK_ATMOMY_GROUP_ID,
+        v: '5.199',
+        access_token: await getAccessToken(),
+        offset: offset,
+        count: count,
+      },
+    })
+    atmoMembers.push(...response.items)
+    offset += count
+    isEmptyNextResponce = response.items.length < count
+  }
+  // console.log({atmoMembers})
   return atmoMembers.includes(vkId)
 }
 

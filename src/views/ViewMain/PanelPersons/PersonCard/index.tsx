@@ -115,7 +115,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
     if (!person.medals || !person.medals.length) {
       return undefined
     }
-    const style = { width: 16, height: 16, padding: 3 }
+    const style = { width: 20, height: 20, padding: 3 }
     const medalsHistoryLocal: ReactElement[] = []
     person.medals.forEach((medalId) => {
       const medalInfo = medals.find((mi) => mi.id === medalId)

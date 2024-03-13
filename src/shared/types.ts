@@ -148,3 +148,13 @@ export interface iExtendedUserInfo extends UserInfo {
   isAppModerator: boolean
   curPerson?: iPerson
 }
+
+export interface iGetListEspoCRMApiParams {
+  urlBase: string
+  maxSize?: number
+  offset?: number
+  select?: string
+  orderBy?: string
+  order?: 'desc' | 'asc'
+  otherParams?: string
+}
