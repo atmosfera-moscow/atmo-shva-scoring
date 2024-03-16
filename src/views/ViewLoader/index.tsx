@@ -7,6 +7,10 @@ import { REACT_APP_APP_TITLE } from '../../shared/consts'
 import './index.css'
 import { TEXTS, TEXT_CHANGE_INTERVAL } from './consts'
 
+const textsRandom = TEXTS.map((value) => ({ value, sort: Math.random() }))
+  .sort((a, b) => a.sort - b.sort)
+  .map(({ value }) => value)
+
 export const ViewLoader: FC<iLoaderViewProps> = ({ ...rest }) => {
   const [isFadeIn, seIsFadeIn] = useState<boolean>(true)
   const [wordIndex, setWordIndex] = useState(0)
@@ -20,7 +24,7 @@ export const ViewLoader: FC<iLoaderViewProps> = ({ ...rest }) => {
 
   useEffect(() => {
     const wordTimeout = setInterval(() => {
-      setWordIndex((wordIndex + 1) % TEXTS.length)
+      setWordIndex((wordIndex + 1) % textsRandom.length)
     }, TEXT_CHANGE_INTERVAL)
     return () => clearInterval(wordTimeout)
   }, [wordIndex])
@@ -34,7 +38,7 @@ export const ViewLoader: FC<iLoaderViewProps> = ({ ...rest }) => {
         <div className="view-loader__content">
           <img src={loaderGif} alt="loading" className="view-loader__content-spinner" />
           <Footnote caps className={`view-loader__content-text ${isFadeIn ? 'fade-in' : 'fade-out'}`}>
-            {TEXTS[wordIndex]}
+            {textsRandom[wordIndex]}
           </Footnote>
         </div>
       </Panel>

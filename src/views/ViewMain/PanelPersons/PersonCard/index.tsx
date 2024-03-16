@@ -3,8 +3,8 @@ import { Avatar, Badge, Counter, IconButton, InfoRow, SimpleCell, Subhead, Title
 import { FC, ReactElement, useEffect, useState } from 'react'
 import './index.css'
 import { iPersonCardProps } from './types'
-import { contentMainInfoKeys } from './consts'
 import SVG from 'react-inlinesvg'
+import { contentMainInfoKeys } from '@src/shared/consts'
 
 export const PersonCard: FC<iPersonCardProps> = ({
   person,
@@ -26,8 +26,15 @@ export const PersonCard: FC<iPersonCardProps> = ({
       headerSubtitles.push(`${person.shvaTeamNumber} команда`)
     }
     if (person.totalScore !== undefined) {
-      let floor = Math.floor(person.totalScore) % 10
-      let title = floor === 1 ? 'балл' : floor > 1 && floor < 5 ? 'балла' : 'баллов'
+      const floor10 = Math.floor(person.totalScore) % 10
+      const floor100 = Math.floor(person.totalScore) % 100
+      const excSet = [11, 12, 13, 14]
+      const title =
+        floor10 === 1 && !excSet.includes(floor100)
+          ? 'балл'
+          : floor10 > 1 && floor10 < 5 && !excSet.includes(floor100)
+            ? 'балла'
+            : 'баллов'
       headerSubtitles.push(`${person.totalScore} ${title}`)
     }
     if (headerSubtitles.length) {
@@ -37,29 +44,29 @@ export const PersonCard: FC<iPersonCardProps> = ({
 
   const getContentMainInfo = (): ReactElement | undefined => {
     const rows: ReactElement[] = []
-    if (isCurPerson || userInfo.isAppModerator) {
-      let key = 'message'
-      let title = labels.find((l) => l.field === key)!.title
-      let value = person[key]
-      if (value) {
-        rows.push(
-          <InfoRow key={key} className="infoRow-sub" header={`${title}:`}>
-            {value}
-          </InfoRow>
-        )
+    contentMainInfoKeys.forEach((keyDict) => {
+      if (keyDict.isPersonal && !(isCurPerson || userInfo.isAppModerator)) {
+        return
       }
-    }
-    contentMainInfoKeys.forEach((key) => {
+      const { key } = keyDict
       if (person[key]) {
         const title = labels.find((l) => l.field === key)!.title
-        rows.push(
-          <InfoRow key={key} className="infoRow-sub" header={`${title}:`}>
-            {person[key]}
-          </InfoRow>
-        )
+
+        if (keyDict.isInline) {
+          rows.push(
+            <InfoRow key={key} className="infoRow-sub" header="">
+              {`${title}: ${person[key]}`}
+            </InfoRow>
+          )
+        } else {
+          rows.push(
+            <InfoRow key={key} className="infoRow-sub" header={`${title}:`}>
+              {person[key]}
+            </InfoRow>
+          )
+        }
       }
     })
-
     return <>{rows}</>
   }
   const contentMainInfo = getContentMainInfo()
