@@ -53,14 +53,16 @@ export const getApiScoringInfo = async (): Promise<iScoringInfo> => {
   const onlinePersons = persons
     .filter((p) => p.eduFormat === eEduFormats.Online)
     .sort((p1, p2) => p2.totalScore - p1.totalScore)
+    .sort((p1, p2) => Number(p1.excluded) - Number(p2.excluded))
     .map((p, i) => {
-      return { ...p, place: i + 1 }
+      return { ...p, place: !p.excluded ? i + 1 : undefined }
     })
   const offlinePersons = persons
     .filter((p) => p.eduFormat === eEduFormats.Offline)
     .sort((p1, p2) => p2.totalScore - p1.totalScore)
+    .sort((p1, p2) => Number(p1.excluded) - Number(p2.excluded))
     .map((p, i) => {
-      return { ...p, place: i + 1 }
+      return { ...p, place: !p.excluded ? i + 1 : undefined }
     })
 
   const lables = parseLabels(labelListDTO)
