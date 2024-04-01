@@ -11,3 +11,8 @@ export enum eEduFormats {
   Offline = 'Оффлайн',
   Online = 'Онлайн',
 }
+
+export enum eLabelContentTypes {
+  main = 'main',
+  week = 'week',
+}

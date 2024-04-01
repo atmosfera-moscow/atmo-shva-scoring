@@ -1,7 +1,22 @@
+import { iContentInfoKey } from './types'
+
 export const REACT_APP_APP_TITLE = 'Рейтинг ШВА'
 export const WARNING_GRADIENT = 'linear-gradient(90deg, #ffb73d 0%, #ffa000 100%)'
 
-export const contentSubInfoKeys = [
+export const contentMainInfoKeys: iContentInfoKey[] = [
+  { re: /^Сообщение от организаторов$/i, isTextValue: true, isPersonal: true },
+  { re: /^Баллы за медиа-активность$/i },
+  { re: /^Баллы за практику$/i },
+  { re: /^Промежуточный экзамен$/i, limit: 8 },
+  { re: /^Промежуточный экзамен \| Игротека$/i, limit: 5 },
+  { re: /^Промежуточный экзамен \| Теория$/i, limit: 3 },
+  // { re: /^Выпускной экзамен$/i, limit: 11 },
+  // { re: /^Выпускной экзамен \| Игротека$/i, limit: 5 },
+  // { re: /^Выпускной экзамен \| Теория$/i, limit: 3 },
+  // { re: /^Выпускной экзамен \| Собеседование$/i, limit: 3 },
+]
+
+export const contentWeekInfoKeys: iContentInfoKey[] = [
   { re: /^Н[1-9]$/i },
   { re: /^Н[1-9] \| Занятие$/i },
   { re: /^Н[1-9] \| Занятие \| Активность$/i, limit: 4 },
@@ -18,15 +33,6 @@ export const contentSubInfoKeys = [
   { re: /^Н[1-9] \| Онлайн$/i },
   { re: /^Н[1-9] \| Победа в мероприятии$/i },
   { re: /^Н[1-9] \| Посещаемость образовалки$/i, limit: 4 },
-  { re: /^Промежуточный экзамен$/i, limit: 8 },
-  { re: /^Промежуточный экзамен | Игротека$/i, limit: 5 },
-  { re: /^Промежуточный экзамен | Теория$/i, limit: 3 },
-]
-
-export const contentMainInfoKeys = [
-  { key: 'message', isPersonal: true },
-  { key: 'totalScorePractice', isInline: true },
-  { key: 'totalScoreMedia', isInline: true },
 ]
 
 export const relatedFieldsParticipants = ['shvaScroingMedalsStaticIds', 'shvaScroingMedalsDynamicIds']

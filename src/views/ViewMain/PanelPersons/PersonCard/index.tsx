@@ -4,7 +4,7 @@ import { FC, ReactElement, useEffect, useState } from 'react'
 import './index.css'
 import { iPersonCardProps } from './types'
 import SVG from 'react-inlinesvg'
-import { contentMainInfoKeys } from '@src/shared/consts'
+import { eLabelContentTypes } from '@src/shared/enums'
 
 export const PersonCard: FC<iPersonCardProps> = ({
   person,
@@ -42,65 +42,45 @@ export const PersonCard: FC<iPersonCardProps> = ({
     }
   }
 
-  const getContentMainInfo = (): ReactElement | undefined => {
-    const rows: ReactElement[] = []
-    contentMainInfoKeys.forEach((keyDict) => {
-      if (keyDict.isPersonal && !(isCurPerson || userInfo.isAppModerator)) {
-        return
-      }
-      const { key } = keyDict
-      if (person[key]) {
-        const title = labels.find((l) => l.field === key)!.title
-
-        if (keyDict.isInline) {
-          rows.push(
-            <InfoRow key={key} className="infoRow-sub" header="">
-              {`${title}: ${person[key]}`}
-            </InfoRow>
-          )
-        } else {
-          rows.push(
-            <InfoRow key={key} className="infoRow-sub" header={`${title}:`}>
-              {person[key]}
-            </InfoRow>
-          )
+  const getContentInfo = (contentType: eLabelContentTypes): ReactElement => {
+    const contentInfo: ReactElement[] = []
+    labels
+      .filter((label) => label.contentType === contentType)
+      .forEach((label) => {
+        const { key, limit, levelLast, level, isPersonal, isTextValue } = label
+        const title = levelLast
+        if (isPersonal && !(isCurPerson || userInfo.isAppModerator)) {
+          return
         }
-      }
-    })
-    return <>{rows}</>
-  }
-  const contentMainInfo = getContentMainInfo()
-
-  const getContentSubInfo = (): ReactElement => {
-    const localContentSubInfo: ReactElement[] = []
-    labels.forEach((label) => {
-      if (label.isContentSubInfoKey) {
-        const key = label.field
-        const limit = label.limit
         const value = person[key]
-        let title = label.levelLast
-        const level = label.level
+        if (!value) {
+          return
+        }
 
-        if (value) {
+        if (!isTextValue) {
           if (level === 0) {
-            localContentSubInfo.push(
+            contentInfo.push(
               <InfoRow key={key} header="">
                 <b>{`${title}: ${value}${limit ? ` из ${limit}` : ''}`}</b>
               </InfoRow>
             )
           } else {
-            localContentSubInfo.push(
+            contentInfo.push(
               <InfoRow key={key} style={{ paddingLeft: `${(level - 1) * 10}px` }} className="infoRow-sub" header="">
                 {`${level > 1 ? '◦' : '•'} ${title}: ${value}${limit ? ` из ${limit}` : ''}`}
               </InfoRow>
             )
           }
+        } else {
+          contentInfo.push(
+            <InfoRow key={key} className="infoRow-sub" header={`${title}:`}>
+              {value}
+            </InfoRow>
+          )
         }
-      }
-    })
-    return <>{localContentSubInfo}</>
+      })
+    return <>{contentInfo}</>
   }
-  const contentSubInfo = getContentSubInfo()
 
   const getMedalsRow = (): ReactElement | undefined => {
     if (!person.medals || !person.medals.length) {
@@ -199,8 +179,8 @@ export const PersonCard: FC<iPersonCardProps> = ({
         </div>
       )}
       {medalsHistory}
-      {contentMainInfo}
-      {contentSubInfo}
+      {getContentInfo(eLabelContentTypes.main)}
+      {getContentInfo(eLabelContentTypes.week)}
     </>
   )
 

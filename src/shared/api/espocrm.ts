@@ -1,5 +1,4 @@
 import {
-  REACT_APP_CRM_SITE,
   REACT_APP_CRM_API_TOKEN,
   REACT_APP_CRM_API_SHVA_PARTICIPANTS_ENTITY,
   REACT_APP_CRM_API_SHVA_MEDALS_ENTITY,
@@ -8,8 +7,9 @@ import {
   REACT_APP_CRM_API,
   REACT_APP_CRM_API_USERS_ENTITY,
   REACT_APP_CRM_API_SHVA_TEAMS_ENTITY,
-  contentSubInfoKeys,
+  contentWeekInfoKeys,
   relatedFieldsParticipants,
+  contentMainInfoKeys,
 } from '../consts'
 
 import AvatartPathArcticfox from '@assets/img/avatartArcticfox.svg'
@@ -20,16 +20,16 @@ import {
   iPerson,
   iLabel,
   iLabelListDTO,
-  iLabelDTO,
   iConfig,
   iScoringInfo,
   iCRMUser,
   iTeam,
   iGetListEspoCRMApiParams,
+  iContentInfoKey,
 } from '../types'
 import apiService from './ApiService'
 import { getPhotoUrls } from './vkbridge'
-import { eEduFormats } from '../enums'
+import { eEduFormats, eLabelContentTypes } from '../enums'
 
 export const getApiScoringInfo = async (): Promise<iScoringInfo> => {
   let persons = await getApiParticipants()
@@ -86,9 +86,23 @@ const parseLabels = (labelListDTO: iLabelListDTO): iLabel[] => {
 
   let labels: iLabel[] = []
 
-  for (let [field, title] of Object.entries(labelDTOFields)) {
-    const contentSubInfoKey = contentSubInfoKeys.find((k) => k.re.test(title))
-    title = title.startsWith('Н') ? 'Неделя ' + title.slice(1) : title
+  for (let [key, title] of Object.entries(labelDTOFields)) {
+    let contentInfoKey: iContentInfoKey | undefined = undefined
+    let localContentInfoKey: iContentInfoKey | undefined = undefined
+    let labelContentType: eLabelContentTypes | undefined = undefined
+
+    localContentInfoKey = contentWeekInfoKeys.find((k) => k.re.test(title))
+    if (localContentInfoKey) {
+      contentInfoKey = localContentInfoKey
+      labelContentType = eLabelContentTypes.week
+    }
+    localContentInfoKey = contentMainInfoKeys.find((k) => k.re.test(title))
+    if (localContentInfoKey) {
+      contentInfoKey = localContentInfoKey
+      labelContentType = eLabelContentTypes.main
+    }
+
+    title = /^Н[0-9].*$/i.test(title) ? 'Неделя ' + title.slice(1) : title
 
     let partsSplitted = title.split(' | ')
     let parts: string[] = [partsSplitted[0]]
@@ -97,17 +111,16 @@ const parseLabels = (labelListDTO: iLabelListDTO): iLabel[] => {
     const partsLast = partsSplitted.slice(2).join(' | ')
     partsSplitted[2] && parts.push(partsLast) && (levelLast = partsLast)
 
-    // TODO: implement max limits
     labels.push({
-      field: field,
+      key: key,
       title: title,
       level: parts.length - 1,
-      isContentSubInfoKey: contentSubInfoKey !== undefined,
-      limit: contentSubInfoKey?.limit,
+      contentType: labelContentType,
       level1: parts[0],
       level2: parts[1],
       level3: parts[2],
       levelLast: levelLast,
+      ...contentInfoKey,
     })
   }
 

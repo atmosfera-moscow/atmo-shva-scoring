@@ -31,4 +31,3 @@ export interface iMainViewProps extends iAuthViewsProps {
   scoringInfo: iScoringInfo
   userInfo: iExtendedUserInfo
 }
-

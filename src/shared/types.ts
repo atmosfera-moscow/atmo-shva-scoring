@@ -1,6 +1,5 @@
 import { GetLaunchParamsResponse, UserInfo } from '@vkontakte/vk-bridge'
-import { eEduFormats } from './enums'
-import { ReactElement } from 'react'
+import { eEduFormats, eLabelContentTypes } from './enums'
 
 export interface iEspoCRMApiPostPayload {
   [key: string]: string[] | string | number | number[] | boolean
@@ -80,16 +79,23 @@ export interface iPerson {
   [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
 
-export interface iLabel {
-  field: string
+export interface iContentInfoKey {
+  re: RegExp
+  isTextValue?: boolean
+  isPersonal?: boolean
+  limit?: number
+}
+
+export interface iLabel extends Omit<iContentInfoKey, 're'> {
+  key: string
   title: string
   level: number
   level1: string
   level2: string
   level3: string
   levelLast: string
-  limit?: number
-  isContentSubInfoKey: boolean
+  contentType?: eLabelContentTypes
+  re?: RegExp
 }
 
 export interface iLabelDTO {
@@ -140,6 +146,8 @@ export interface iSort {
   key: string
   order: 1 | -1
 }
+
+
 
 export interface iExtendedUserInfo extends UserInfo {
   launchParams: GetLaunchParamsResponse

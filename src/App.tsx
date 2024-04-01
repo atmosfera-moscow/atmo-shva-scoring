@@ -1,19 +1,14 @@
 import { ViewError } from '@views/ViewError'
-import bridge, { AppearanceType } from '@vkontakte/vk-bridge'
 import {
-  AdaptivityProvider,
-  AppRoot,
-  ConfigProvider,
   Root,
   SplitCol,
   SplitLayout,
-  useAdaptivityConditionalRender,
 } from '@vkontakte/vkui'
 import '@vkontakte/vkui/dist/vkui.css'
 import { FC, useEffect, useState } from 'react'
 import { getApiScoringInfo, checkIsParticipant, checkIsAppAdmin } from './shared/api/espocrm'
 import { getUserInfo, checkIsAtmoMember, getLaunchParams } from './shared/api/vkbridge'
-import { iConfig, iExtendedUserInfo, iPerson, iScoringInfo } from './shared/types'
+import { iExtendedUserInfo, iScoringInfo } from './shared/types'
 import { ViewBlock } from '@views/ViewBlock'
 import { ViewLoader } from '@views/ViewLoader'
 import { ViewAdmin } from '@views/ViewAdmin'
