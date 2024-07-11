@@ -79,7 +79,8 @@ export const App: FC = () => {
           setActiveView(eViewIds.Main)
         }
       } catch (error) {
-        const errorMessageToSet = `App.fetchData hook error ${JSON.stringify(error)}`
+        // const errorMessageToSet = `App.fetchData hook error ${JSON.stringify(error)}`
+        const errorMessageToSet = `App.fetchData hook error ${error}`
         console.log(new Date().toTimeString(), errorMessageToSet)
         setErrorMessage(errorMessageToSet)
         setActiveView(eViewIds.Error)

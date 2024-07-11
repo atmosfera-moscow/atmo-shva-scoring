@@ -11,7 +11,7 @@ export const ViewError: FC<iErrorViewProps> = ({ errorMessage, ...rest }) => (
     <Panel id={eViewIds.Error}>
       <PanelHeader delimiter="none">{REACT_APP_APP_TITLE}</PanelHeader>
       <div className="view-error__content">
-        <Text className="view-error__content-text">При загрузке произошла ошибка. Пожалуйста, попробуй позже или сообщите администратору.</Text>
+        <Text className="view-error__content-text">При загрузке произошла ошибка. Пожалуйста, попробуйте очистить кеш (иконка ...) или перезапустить приложение ВК. Иначе сообщите администратору.</Text>
         {errorMessage && 
           (<Text className="view-error__content-text">Ошибка: {errorMessage}</Text>)
         }

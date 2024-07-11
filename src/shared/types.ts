@@ -67,14 +67,15 @@ export interface iPerson {
   shvaTeamNumber?: number
   message?: string
   eduFormat: eEduFormats
-  totalScore: number
-  totalScoreActivity: number
-  totalScoreEdu: number
-  totalScoreGames: number
-  totalScoreMulct: number
-  totalScoreOpt: number
-  totalScoreOrg: number
-  totalScoreProblems: number
+  totalScore?: number
+  // TODO: rm due to unused
+  // totalScoreActivity: number
+  // totalScoreEdu: number
+  // totalScoreGames: number
+  // totalScoreMulct: number
+  // totalScoreOpt: number
+  // totalScoreOrg: number
+  // totalScoreProblems: number
   excluded: boolean
   [key: string]: string | number | boolean | string[] | number[] | undefined | 'null'
 }
@@ -83,7 +84,9 @@ export interface iContentInfoKey {
   re: RegExp
   isTextValue?: boolean
   isPersonal?: boolean
+  isZeroAllowed?: boolean
   limit?: number
+  threshold?: number
 }
 
 export interface iLabel extends Omit<iContentInfoKey, 're'> {
@@ -130,7 +133,9 @@ export interface iScoringInfo {
   onlinePersons: iPerson[]
   offlinePersons: iPerson[]
   isOnlineEnabled: boolean
+  isNoScoreOnlineMode: boolean
   isOfflineEnabled: boolean
+  isNoScoreOfflineMode: boolean
   labels: iLabel[]
   scoringMax?: {
     [key: string]: number

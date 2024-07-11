@@ -10,7 +10,7 @@ import { getDynamicAppWidgetCode } from './helpers'
 import { iPerson } from '@src/shared/types'
 
 export const ViewAdmin: FC<iAdminViewProps> = ({ setActiveView, scoringInfo, userInfo, ...rest }) => {
-  const [isShvaButtonLoading, setIsShvaButtonLoading] = useState<boolean>(false)
+  const [isShvaOfflineButtonLoading, setIsShvaOfflineButtonLoading] = useState<boolean>(false)
   const [isShvaOnlineButtonLoading, setIisShvaOnlineButtonLoading] = useState<boolean>(false)
   useEffect(() => {
     // console.log({tableWidget})
@@ -28,7 +28,7 @@ export const ViewAdmin: FC<iAdminViewProps> = ({ setActiveView, scoringInfo, use
     switch (group) {
       case 'offline':
         groupId = REACT_APP_VK_SHVA_GROUP_ID
-        loadingButtonFun = setIsShvaButtonLoading
+        loadingButtonFun = setIsShvaOfflineButtonLoading
         persons = scoringInfo.offlinePersons
         break
       case 'online':
@@ -80,8 +80,8 @@ export const ViewAdmin: FC<iAdminViewProps> = ({ setActiveView, scoringInfo, use
               appearance="positive"
               // stretched={true}
               mode="primary"
-              loading={isShvaButtonLoading}
-              disabled={!scoringInfo.isOfflineEnabled}
+              loading={isShvaOfflineButtonLoading}
+              disabled={!scoringInfo.isOfflineEnabled || scoringInfo.isNoScoreOfflineMode}
             >
               Обновить виджет
             </Button>
@@ -89,7 +89,7 @@ export const ViewAdmin: FC<iAdminViewProps> = ({ setActiveView, scoringInfo, use
               onClick={() => updateAppWidget('offline', 'del')}
               appearance="neutral"
               mode="primary"
-              loading={isShvaButtonLoading}
+              loading={isShvaOfflineButtonLoading}
             >
               Удалить виджет
             </Button>
@@ -103,7 +103,7 @@ export const ViewAdmin: FC<iAdminViewProps> = ({ setActiveView, scoringInfo, use
               appearance="positive"
               mode="primary"
               loading={isShvaOnlineButtonLoading}
-              disabled={!scoringInfo.isOnlineEnabled}
+              disabled={!scoringInfo.isOnlineEnabled || scoringInfo.isNoScoreOnlineMode}
             >
               Обновить виджет
             </Button>

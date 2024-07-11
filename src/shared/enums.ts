@@ -15,4 +15,5 @@ export enum eEduFormats {
 export enum eLabelContentTypes {
   main = 'main',
   week = 'week',
+  weekNoScoreMode = 'weekNoScoreMode',
 }

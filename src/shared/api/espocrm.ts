@@ -10,6 +10,7 @@ import {
   contentWeekInfoKeys,
   relatedFieldsParticipants,
   contentMainInfoKeys,
+  contentWeekInfoNoScoreModeKeys,
 } from '../consts'
 
 import AvatartPathArcticfox from '@assets/img/avatartArcticfox.svg'
@@ -30,14 +31,16 @@ import {
 import apiService from './ApiService'
 import { getPhotoUrls } from './vkbridge'
 import { eEduFormats, eLabelContentTypes } from '../enums'
+import { scorePlaceProcessing } from './helpers'
 
 export const getApiScoringInfo = async (): Promise<iScoringInfo> => {
   let persons = await getApiParticipants()
-  const medals = await getApiMedals()
+  let medals = await getApiMedals()
   const config = await getApiConfig()
   const labelListDTO = await getApiLables()
   const teams = await getApiTeams()
 
+  // related models fields
   persons = persons.map((p) => {
     const pMedals: string[] = []
     p.shvaScroingMedalsStaticIds && pMedals.push(...p.shvaScroingMedalsStaticIds)
@@ -50,20 +53,14 @@ export const getApiScoringInfo = async (): Promise<iScoringInfo> => {
     }
   })
 
-  const onlinePersons = persons
-    .filter((p) => p.eduFormat === eEduFormats.Online)
-    .sort((p1, p2) => p2.totalScore - p1.totalScore)
-    .sort((p1, p2) => Number(p1.excluded) - Number(p2.excluded))
-    .map((p, i) => {
-      return { ...p, place: !p.excluded ? i + 1 : undefined }
-    })
-  const offlinePersons = persons
-    .filter((p) => p.eduFormat === eEduFormats.Offline)
-    .sort((p1, p2) => p2.totalScore - p1.totalScore)
-    .sort((p1, p2) => Number(p1.excluded) - Number(p2.excluded))
-    .map((p, i) => {
-      return { ...p, place: !p.excluded ? i + 1 : undefined }
-    })
+  // filter
+  const isNoScoreOnlineMode = config.find((c) => c.key === 'isNoScoreOnlineMode')?.value === true || false
+  const isNoScoreOfflineMode = config.find((c) => c.key === 'isNoScoreOfflineMode')?.value === true || false
+  //
+  let onlinePersons = persons.filter((p) => p.eduFormat === eEduFormats.Online)
+  onlinePersons = scorePlaceProcessing(onlinePersons, isNoScoreOnlineMode)
+  let offlinePersons = persons.filter((p) => p.eduFormat === eEduFormats.Offline)
+  offlinePersons = scorePlaceProcessing(offlinePersons, isNoScoreOfflineMode)
 
   const lables = parseLabels(labelListDTO)
 
@@ -73,6 +70,8 @@ export const getApiScoringInfo = async (): Promise<iScoringInfo> => {
     offlinePersons: offlinePersons,
     isOnlineEnabled: config.find((c) => c.key === 'isOnlineEnabled')?.value === true || false,
     isOfflineEnabled: config.find((c) => c.key === 'isOfflineEnabled')?.value === true || false,
+    isNoScoreOnlineMode: isNoScoreOnlineMode,
+    isNoScoreOfflineMode: isNoScoreOfflineMode,
     labels: lables,
     scoringMax: undefined,
   }
@@ -95,6 +94,11 @@ const parseLabels = (labelListDTO: iLabelListDTO): iLabel[] => {
     if (localContentInfoKey) {
       contentInfoKey = localContentInfoKey
       labelContentType = eLabelContentTypes.week
+    }
+    localContentInfoKey = contentWeekInfoNoScoreModeKeys.find((k) => k.re.test(title))
+    if (localContentInfoKey) {
+      contentInfoKey = localContentInfoKey
+      labelContentType = eLabelContentTypes.weekNoScoreMode
     }
     localContentInfoKey = contentMainInfoKeys.find((k) => k.re.test(title))
     if (localContentInfoKey) {

@@ -8,20 +8,21 @@ import {
   Panel,
   PanelHeader,
   Search,
+  Snackbar,
   Spacing,
   Spinner,
   Tabbar,
   TabbarItem,
   Text,
 } from '@vkontakte/vkui'
-import { ChangeEvent, FC, useEffect, useState } from 'react'
+import { ChangeEvent, FC, ReactElement, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
 import blockGif from '@assets/img/cat_wait.gif'
 import { PersonCard } from '@views/ViewMain/PanelPersons/PersonCard'
 import { eEduFormats } from '@src/shared/enums'
 import { iPerson } from '@src/shared/types'
-import { Icon28ComputerOutline, Icon28UsersOutline } from '@vkontakte/icons'
+import { Icon28ComputerOutline, Icon28UsersOutline, Icon28WarningTriangleOutline } from '@vkontakte/icons'
 import '../index.css'
 import { iPersonsPanelProps } from '../types'
 import { CHUNK_SIZE } from './consts'
@@ -34,6 +35,7 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
   const [tabbarItemId, setTabbarItemId] = useState<eEduFormats>(curPerson?.eduFormat || eEduFormats.Offline)
   const [format, setFormat] = useState<eEduFormats>()
   const [isFormatEnabled, setIsFormatEnabled] = useState<boolean>(false)
+  const [isNoScoreMode, setIsNoScoreMode] = useState<boolean>(false)
   const [searchString, setSearchString] = useState<string>('')
   const [isPersonsCardsCollapsed, setIsPersonsCardsCollapsed] = useState<boolean>(true)
 
@@ -42,23 +44,61 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
   const [scrolledPersons, setScrolledPersons] = useState<iPerson[]>([])
   const [hasPersonsToScroll, setHasPersonsToScroll] = useState<boolean>(true)
   const [scrollChunkNum, setScrollChunkNum] = useState<number>(1)
+  const [snackbar, setSnackbar] = useState<ReactElement | null>(null)
 
   // tab switching
   useEffect(() => {
     console.log(new Date().toTimeString(), 'tabbarItemId hook called')
+    let localIsFormatEnabled = false
+    let localIsNoScoreMode = false
     switch (tabbarItemId) {
       case eEduFormats.Offline:
-        setIsFormatEnabled(scoringInfo.isOfflineEnabled)
+        // TODO: no dupl
+        localIsFormatEnabled = scoringInfo.isOfflineEnabled
+        localIsNoScoreMode = scoringInfo.isNoScoreOfflineMode
+        setIsFormatEnabled(localIsFormatEnabled)
+        setIsNoScoreMode(localIsNoScoreMode)
         setFormat(eEduFormats.Offline)
         setPersons(scoringInfo.offlinePersons)
         break
       case eEduFormats.Online:
-        setIsFormatEnabled(scoringInfo.isOnlineEnabled)
+        localIsFormatEnabled = scoringInfo.isOnlineEnabled
+        localIsNoScoreMode = scoringInfo.isNoScoreOnlineMode
+        setIsFormatEnabled(localIsFormatEnabled)
+        setIsNoScoreMode(localIsNoScoreMode)
         setFormat(eEduFormats.Online)
         setPersons(scoringInfo.onlinePersons)
         break
     }
     setSearchString('')
+
+    if (!localIsFormatEnabled && userInfo.isAppModerator) {
+      setSnackbar(
+        <div style={{ display: 'grid', padding: 32, gap: 32 }}>
+          <Snackbar
+            onClose={() => setSnackbar(null)}
+            before={<Icon28WarningTriangleOutline fill="var(--vkui--color_accent_orange_peach)" />}
+            subtitle="ты видишь его, так как являешься вожатым"
+          >
+            Рейтинг на обновлении
+          </Snackbar>
+        </div>
+      )
+    }
+    if (localIsNoScoreMode) {
+      setSnackbar(
+        <div style={{ display: 'grid', padding: 32, gap: 32 }}>
+          <Snackbar
+            onClose={() => setSnackbar(null)}
+            before={<Icon28WarningTriangleOutline fill="var(--vkui--color_accent_orange_peach)" />}
+            subtitle="до объявления лидеров Инструктива"
+          >
+            Суммарные баллы скрыты
+          </Snackbar>
+        </div>
+      )
+    }
+
     console.log(new Date().toTimeString(), 'tabbarItemId hook ended')
   }, [
     tabbarItemId,
@@ -66,6 +106,7 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
     scoringInfo.isOnlineEnabled,
     scoringInfo.offlinePersons,
     scoringInfo.onlinePersons,
+    userInfo.isAppModerator,
   ])
 
   // search
@@ -197,6 +238,7 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
                 isCurPerson={person === curPerson}
                 userInfo={userInfo}
                 isCardsCollapsed={isPersonsCardsCollapsed}
+                isNoScoreMode={isNoScoreMode}
                 labels={scoringInfo.labels}
                 medals={scoringInfo.medals}
               />
@@ -209,7 +251,7 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
     </>
   )
 
-  const updating = (
+  const updatingContent = (
     <div className="persons-panel__updating-content">
       <Text className="persons-panel__updating-content-text">Рейтинг на обновлении</Text>
       <img src={blockGif} alt="Access denied" className="persons-panel__updating-content-image" />
@@ -220,7 +262,8 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
     <Panel {...rest}>
       {panelHeader}
       <Spacing size={100} />
-      {isFormatEnabled || userInfo.isAppModerator ? content : updating}
+      {isFormatEnabled || userInfo.isAppModerator ? content : updatingContent}
+      {snackbar}
     </Panel>
   )
 }

@@ -10,19 +10,21 @@ export const PersonCard: FC<iPersonCardProps> = ({
   person,
   isCardsCollapsed,
   isCurPerson,
+  isNoScoreMode,
   labels,
   medals,
   userInfo,
 }) => {
-  const [isCardCollapsed, setIsCardCollapsed] = useState<boolean>(isCardsCollapsed)
+  const [isCardCollapsed, setIsCardCollapsed] = useState<boolean>(!isCurPerson && isCardsCollapsed)
+
   useEffect(() => {
-    setIsCardCollapsed(isCardsCollapsed)
-  }, [isCardsCollapsed])
+    setIsCardCollapsed(!isCurPerson && isCardsCollapsed)
+  }, [isCurPerson, isCardsCollapsed])
 
   const getHeaderSubtitles = (): ReactElement | undefined => {
     const headerSubtitles = []
     headerSubtitles.push(`${person.badge} бейдж`)
-    if (person.shvaTeamNumber) {
+    if (person.shvaTeamNumber !== undefined) {
       headerSubtitles.push(`${person.shvaTeamNumber} команда`)
     }
     if (person.totalScore !== undefined) {
@@ -42,39 +44,50 @@ export const PersonCard: FC<iPersonCardProps> = ({
     }
   }
 
-  const getContentInfo = (contentType: eLabelContentTypes): ReactElement => {
+  const getContentInfo = (contentTypes: eLabelContentTypes[]): ReactElement => {
     const contentInfo: ReactElement[] = []
     labels
-      .filter((label) => label.contentType === contentType)
+      .filter((label) => label.contentType && contentTypes.includes(label.contentType))
       .forEach((label) => {
-        const { key, limit, levelLast, level, isPersonal, isTextValue } = label
-        const title = levelLast
-        if (isPersonal && !(isCurPerson || userInfo.isAppModerator)) {
-          return
-        }
+        const { key, limit, levelLast, level, isPersonal, isTextValue, isZeroAllowed, threshold } = label
         const value = person[key]
-        if (!value) {
+        const title = levelLast
+
+        let isToView = !isPersonal || isCurPerson || userInfo.isAppModerator
+        isToView = isToView && ((isZeroAllowed && value === 0) || (value as boolean))
+
+        if (!isToView) {
           return
         }
 
         if (!isTextValue) {
+          let text = `${title}: ${value}`
+          if (limit) {
+            text = `${text} из ${limit}`
+          }
+          if (threshold) {
+            text = `${text} (порог сдачи ${threshold})`
+            text = `${text} ${(value as number) >= threshold ? '✅' : '❌'}`
+          }
+
           if (level === 0) {
             contentInfo.push(
               <InfoRow key={key} header="">
-                <b>{`${title}: ${value}${limit ? ` из ${limit}` : ''}`}</b>
+                <b>{text}</b>
               </InfoRow>
             )
           } else {
             contentInfo.push(
               <InfoRow key={key} style={{ paddingLeft: `${(level - 1) * 10}px` }} className="infoRow-sub" header="">
-                {`${level > 1 ? '◦' : '•'} ${title}: ${value}${limit ? ` из ${limit}` : ''}`}
+                {`${level > 1 ? '◦' : '•'} ${text}`}
               </InfoRow>
             )
           }
         } else {
+          const text = value
           contentInfo.push(
             <InfoRow key={key} className="infoRow-sub" header={`${title}:`}>
-              {value}
+              {text}
             </InfoRow>
           )
         }
@@ -82,6 +95,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
     return <>{contentInfo}</>
   }
 
+  // TODO: unite both funs
   const getMedalsRow = (): ReactElement | undefined => {
     if (!person.medals || !person.medals.length) {
       return undefined
@@ -90,7 +104,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
     const medalsRowLocal: ReactElement[] = []
     person.medals.forEach((medalId) => {
       const medalInfo = medals.find((mi) => mi.id === medalId)
-      if (medalInfo) {
+      if (medalInfo && !medalInfo.disabled) {
         medalsRowLocal.push(<SVG src={medalInfo.iconSvg} style={style}></SVG>)
       }
     })
@@ -106,7 +120,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
     const medalsHistoryLocal: ReactElement[] = []
     person.medals.forEach((medalId) => {
       const medalInfo = medals.find((mi) => mi.id === medalId)
-      if (medalInfo) {
+      if (medalInfo && !medalInfo.disabled) {
         const title = person.vkSex === 'Ж' ? medalInfo.titleFemale : medalInfo.titleMale
         const image = medalInfo.iconSvg
         medalsHistoryLocal.push(
@@ -179,8 +193,10 @@ export const PersonCard: FC<iPersonCardProps> = ({
         </div>
       )}
       {medalsHistory}
-      {getContentInfo(eLabelContentTypes.main)}
-      {getContentInfo(eLabelContentTypes.week)}
+      {getContentInfo([eLabelContentTypes.main])}
+      {isNoScoreMode
+        ? getContentInfo([eLabelContentTypes.weekNoScoreMode])
+        : getContentInfo([eLabelContentTypes.week, eLabelContentTypes.weekNoScoreMode])}
     </>
   )
 
@@ -188,7 +204,7 @@ export const PersonCard: FC<iPersonCardProps> = ({
     <div className="person-card__content">
       <div className="person-card__content-info">{contentInfo}</div>
       <div className="person-card__content-buttons">
-        {person.vkID && (
+        {!isCurPerson && person.vkID && (
           <IconButton
             aria-label="vk link"
             onClick={(e) => handleClick(e)}
