@@ -1,3 +1,5 @@
+export const TEST_TEXTS = ['тестируем1', 'тестируем2', 'тестируем3']
+
 export const TEXTS = [
   // 'Загружаем базу участников ШВА',
   // 'Прокачиваем soft-скиллы',
@@ -48,4 +50,4 @@ export const TEXTS = [
   'Скоро ты узнаешь, что такое Шалабамба!',
 ]
 
-export const TEXT_CHANGE_INTERVAL = 4000
+export const TEXT_CHANGE_INTERVAL = 5000
