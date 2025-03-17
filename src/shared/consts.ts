@@ -1,6 +1,6 @@
 import { iContentInfoKey } from './types'
 
-export const REACT_APP_APP_TITLE = 'Рейтинг ШВА24'
+export const REACT_APP_APP_TITLE = 'Рейтинг ШВА25'
 export const WARNING_GRADIENT = 'linear-gradient(90deg, #ffb73d 0%, #ffa000 100%)'
 
 export const contentMainInfoKeys: iContentInfoKey[] = [
@@ -56,6 +56,17 @@ export const contentWeekInfoNoScoreModeKeys: iContentInfoKey[] = [
   { re: /^Н[6-9] \| Онлайн$/i },
   { re: /^Н[6-9] \| Победа в мероприятии$/i },
   { re: /^Н[6-9] \| Посещаемость образовалки$/i, limit: 4 },
+]
+
+export const keysToMark: string[] = [
+  'week1Visit',
+  'week2Visit',
+  'week3Visit',
+  'week4Visit',
+  'week5Visit',
+  'week6Visit',
+  'week7Visit',
+  'week8Visit',
 ]
 // export const contentWeekInfoNoScoreModeKeys = contentWeekInfoKeys.map((key) => ({
 //   ...key,

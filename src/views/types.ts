@@ -30,4 +30,5 @@ export interface iAdminViewProps extends iAuthViewsProps {
 export interface iMainViewProps extends iAuthViewsProps {
   scoringInfo: iScoringInfo
   userInfo: iExtendedUserInfo
+  setActiveModalPersonalQR: () => void
 }

@@ -15,6 +15,7 @@ import {
   TabbarItem,
   Text,
 } from '@vkontakte/vkui'
+
 import { ChangeEvent, FC, ReactElement, useEffect, useState } from 'react'
 import InfiniteScroll from 'react-infinite-scroll-component'
 
@@ -22,14 +23,19 @@ import blockGif from '@assets/img/cat_wait.gif'
 import { PersonCard } from '@views/ViewMain/PanelPersons/PersonCard'
 import { eEduFormats } from '@src/shared/enums'
 import { iPerson } from '@src/shared/types'
-import { Icon28ComputerOutline, Icon28UsersOutline, Icon28WarningTriangleOutline } from '@vkontakte/icons'
+import {
+  Icon28ComputerOutline,
+  Icon28UsersOutline,
+  Icon28WarningTriangleOutline,
+  Icon28QrCodeOutline,
+} from '@vkontakte/icons'
 import '../index.css'
 import { iPersonsPanelProps } from '../types'
 import { CHUNK_SIZE } from './consts'
 import { searchPersons, shiftCurPerson } from './helpers'
 import './index.css'
 
-export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, setActivePanel, ...rest }) => {
+export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, setActivePanel, setActiveModalPersonalQR, ...rest }) => {
   const { curPerson } = userInfo
 
   const [tabbarItemId, setTabbarItemId] = useState<eEduFormats>(curPerson?.eduFormat || eEduFormats.Offline)
@@ -107,6 +113,8 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
     scoringInfo.offlinePersons,
     scoringInfo.onlinePersons,
     userInfo.isAppModerator,
+    scoringInfo.isNoScoreOfflineMode,
+    scoringInfo.isNoScoreOnlineMode,
   ])
 
   // search
@@ -168,6 +176,11 @@ export const PanelPersons: FC<iPersonsPanelProps> = ({ userInfo, scoringInfo, se
           onChange={onSearchChange}
         />
         <div className="persons-panel__header-buttons">
+          {userInfo.isShvaParticipant && curPerson && curPerson.id && (
+            <IconButton aria-label="qr button" onClick={setActiveModalPersonalQR} disabled={false}>
+              <Icon28QrCodeOutline className="persons-panel__header-buttons-qr" />
+            </IconButton>
+          )}
           {isPersonsCardsCollapsed ? (
             <IconButton aria-label="expand button" onClick={() => setIsPersonsCardsCollapsed(!isPersonsCardsCollapsed)}>
               <IconExpand className="persons-panel__header-buttons-expand-svg" />

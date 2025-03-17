@@ -1,12 +1,8 @@
 import { ViewError } from '@views/ViewError'
-import {
-  Root,
-  SplitCol,
-  SplitLayout,
-} from '@vkontakte/vkui'
+import { ModalCard, ModalRoot, Root, SplitCol, SplitLayout } from '@vkontakte/vkui'
 import '@vkontakte/vkui/dist/vkui.css'
-import { FC, useEffect, useState } from 'react'
-import { getApiScoringInfo, checkIsParticipant, checkIsAppAdmin } from './shared/api/espocrm'
+import { FC, ReactElement, useEffect, useState } from 'react'
+import { getApiScoringInfo, checkIsParticipant, checkIsAppAdmin, checkIsEntranceAdmin } from './shared/api/espocrm'
 import { getUserInfo, checkIsAtmoMember, getLaunchParams } from './shared/api/vkbridge'
 import { iExtendedUserInfo, iScoringInfo } from './shared/types'
 import { ViewBlock } from '@views/ViewBlock'
@@ -14,9 +10,16 @@ import { ViewLoader } from '@views/ViewLoader'
 import { ViewAdmin } from '@views/ViewAdmin'
 import { ViewMain } from '@views/ViewMain'
 import { eViewIds } from '@views/enums'
+import SVG from 'react-inlinesvg'
+import vkQr from '@vkontakte/vk-qr'
+import { useAppearance } from '@vkontakte/vk-bridge-react'
 
 export const App: FC = () => {
+  const vkBridgeAppearance = useAppearance() || undefined
+
   const [activeView, setActiveView] = useState<eViewIds>(eViewIds.Loader)
+  const [activeModal, setActiveModal] = useState<string | null>(null)
+  const [personalQRModal, setPersonalQRModal] = useState<ReactElement | null>(null)
 
   const [scoringInfo, setScoringInfo] = useState<iScoringInfo>()
   const [userInfo, setUserInfo] = useState<iExtendedUserInfo>()
@@ -32,6 +35,7 @@ export const App: FC = () => {
           ...(await getUserInfo()),
           launchParams: await getLaunchParams(),
           isAppAdmin: false,
+          isEntranceAdmin: false,
           isAppModerator: false,
           isShvaParticipant: false,
         }
@@ -45,10 +49,11 @@ export const App: FC = () => {
         console.log(new Date().toTimeString(), 'Access allowed: userInfo')
 
         const isAppAdmin = await checkIsAppAdmin(userInfoToSet.id)
+        const isEntranceAdmin = await checkIsEntranceAdmin(userInfoToSet.id)
         const isShvaParticipant = await checkIsParticipant(userInfoToSet.id)
         const isAppModerator = await checkIsAtmoMember(userInfoToSet.id)
 
-        userInfoToSet = { ...userInfoToSet, isShvaParticipant, isAppAdmin, isAppModerator }
+        userInfoToSet = { ...userInfoToSet, isShvaParticipant, isAppAdmin, isAppModerator, isEntranceAdmin }
 
         if (!(isAppModerator || isShvaParticipant)) {
           console.log(new Date().toTimeString(), 'Access denied: not isAppModerator || isShvaParticipant')
@@ -71,7 +76,7 @@ export const App: FC = () => {
         setScoringInfo(scoringInfoToSet)
 
         console.log(new Date().toTimeString(), 'App.fetchData hook processed')
-        if (userInfoToSet.isAppAdmin) {
+        if (userInfoToSet.isAppAdmin || userInfoToSet.isEntranceAdmin) {
           console.log('Mode admin')
           setActiveView(eViewIds.Admin)
         } else {
@@ -81,7 +86,7 @@ export const App: FC = () => {
       } catch (error) {
         // const errorMessageToSet = `App.fetchData hook error ${JSON.stringify(error)}`
         const errorMessageToSet = `App.fetchData hook error ${error}`
-        console.log(new Date().toTimeString(), errorMessageToSet)
+        console.log(new Date().toTimeString(), errorMessageToSet, error)
         setErrorMessage(errorMessageToSet)
         setActiveView(eViewIds.Error)
       }
@@ -90,9 +95,38 @@ export const App: FC = () => {
     fetchData()
   }, [])
 
+  useEffect(() => {
+    async function updatePersonalQRModal() {
+      if (!userInfo || !userInfo.curPerson?.id) {
+        return null
+      }
+
+      const personalQRSvg = vkQr.createQR(`${userInfo.curPerson?.id}`, {
+        qrSize: 256,
+        isShowLogo: false,
+        foregroundColor: vkBridgeAppearance === 'dark' ? '#ffffff' : '#000000',
+      })
+      const style: React.CSSProperties = {
+        width: 300,
+        height: 300,
+        padding: "3 3 40 3",
+        marginLeft: 'auto',
+        marginRight: 'auto',
+      }
+
+      setPersonalQRModal(<SVG src={personalQRSvg} style={style}></SVG>)
+    }
+    updatePersonalQRModal()
+  }, [userInfo])
+
   return (
     <SplitLayout>
       <SplitCol>
+        <ModalRoot activeModal={activeModal} onClose={() => setActiveModal(null)}>
+          <ModalCard id="personalQR" onClose={() => setActiveModal(null)}>
+            {personalQRModal}
+          </ModalCard>
+        </ModalRoot>
         <Root activeView={activeView}>
           <ViewLoader id={eViewIds.Loader} />
           <ViewError id={eViewIds.Error} errorMessage={errorMessage} />
@@ -103,7 +137,12 @@ export const App: FC = () => {
             userInfo={userInfo!}
             setActiveView={setActiveView}
           />
-          <ViewMain id={eViewIds.Main} scoringInfo={scoringInfo!} userInfo={userInfo!} />
+          <ViewMain
+            id={eViewIds.Main}
+            scoringInfo={scoringInfo!}
+            userInfo={userInfo!}
+            setActiveModalPersonalQR={() => setActiveModal('personalQR')}
+          />
         </Root>
       </SplitCol>
     </SplitLayout>
