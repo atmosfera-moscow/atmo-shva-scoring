@@ -157,6 +157,7 @@ export interface iSort {
 export interface iExtendedUserInfo extends UserInfo {
   launchParams: GetLaunchParamsResponse
   isAppAdmin: boolean
+  isEntranceAdmin: boolean
   isShvaParticipant: boolean
   isAppModerator: boolean
   curPerson?: iPerson

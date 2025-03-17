@@ -10,5 +10,6 @@ export interface iCustomPanelProps extends PanelProps {
 export interface iPersonsPanelProps extends iCustomPanelProps {
   id: ePanelIds
   setActivePanel: (panel: ePanelIds) => void
+  setActiveModalPersonalQR: () => void
   scoringInfo: iScoringInfo
 }

@@ -5,7 +5,7 @@ import { View } from '@vkontakte/vkui'
 import { FC, useState } from 'react'
 import { PanelPersons } from './PanelPersons'
 
-export const ViewMain: FC<iMainViewProps> = ({ userInfo, scoringInfo, ...rest }) => {
+export const ViewMain: FC<iMainViewProps> = ({ userInfo, scoringInfo, setActiveModalPersonalQR, ...rest }) => {
   const [activePanel, setActivePanel] = useState<ePanelIds>(ePanelIds.Persons)
 
   return (
@@ -18,6 +18,7 @@ export const ViewMain: FC<iMainViewProps> = ({ userInfo, scoringInfo, ...rest })
       <PanelPersons
         id={ePanelIds.Persons}
         setActivePanel={setActivePanel}
+        setActiveModalPersonalQR={setActiveModalPersonalQR}
         userInfo={userInfo}
         scoringInfo={scoringInfo}
       />

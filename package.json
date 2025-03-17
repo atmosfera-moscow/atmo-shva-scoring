@@ -15,6 +15,7 @@
     "@vkontakte/vk-bridge": "^2.14.1",
     "@vkontakte/vk-bridge-react": "^1.0.1",
     "@vkontakte/vk-miniapps-deploy": "^0.1.6",
+    "@vkontakte/vk-qr": "^2.1.1",
     "@vkontakte/vkjs": "^1.1.1",
     "@vkontakte/vkui": "^6.0.0",
     "axios": "^1.6.7",

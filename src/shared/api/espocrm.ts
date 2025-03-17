@@ -27,6 +27,7 @@ import {
   iTeam,
   iGetListEspoCRMApiParams,
   iContentInfoKey,
+  iEspoCRMApiPostPayload,
 } from '../types'
 import apiService from './ApiService'
 import { getPhotoUrls } from './vkbridge'
@@ -162,9 +163,28 @@ export const checkIsAppAdmin = async (vkId: number): Promise<boolean> => {
   //   },
   // ]
   const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_USERS_ENTITY}`
+  // группа Администраторы IT
   const otherParams = `where%5B0%5D%5Btype%5D=linkedWith&where%5B0%5D%5Battribute%5D=teams&where%5B0%5D%5Bvalue%5D%5B%5D=65ca7982de804f874&where%5B1%5D%5Btype%5D=equals&where%5B1%5D%5Battribute%5D=vkID&where%5B1%5D%5Bvalue%5D=${vkId}`
   let persons = await getListEspoCRMApi<iCRMUser>({ urlBase, otherParams })
   console.log(new Date().toTimeString(), 'checkIsAppAdmin recieved')
+
+  return persons.length > 0
+}
+
+export const checkIsEntranceAdmin = async (vkId: number): Promise<boolean> => {
+  console.log(new Date().toTimeString(), 'checkIsEntranceAdministrator sent')
+  // const whereParams = [
+  //   {
+  //     type: 'equals',
+  //     attribute: 'vkID',
+  //     value: vkId,
+  //   },
+  // ]
+  const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_USERS_ENTITY}`
+  // группа ШВА Администраторы
+  const otherParams = `where%5B0%5D%5Btype%5D=linkedWith&where%5B0%5D%5Battribute%5D=teams&where%5B0%5D%5Bvalue%5D%5B%5D=65ca79779e86f5d50&where%5B1%5D%5Btype%5D=equals&where%5B1%5D%5Battribute%5D=vkID&where%5B1%5D%5Bvalue%5D=${vkId}`
+  let persons = await getListEspoCRMApi<iCRMUser>({ urlBase, otherParams })
+  console.log(new Date().toTimeString(), 'checkIsEntranceAdministrator recieved')
 
   return persons.length > 0
 }
@@ -235,6 +255,14 @@ const getApiLables = async (): Promise<iLabelListDTO> => {
   return labelListDTO
 }
 
+export const updateApiParticipant = async (id: string, payload: iEspoCRMApiPostPayload): Promise<boolean> => {
+  console.log(new Date().toTimeString(), 'updateApiParticipant sent')
+  const urlBase = `${REACT_APP_CRM_API}/${REACT_APP_CRM_API_SHVA_PARTICIPANTS_ENTITY}/${id}`
+  const response = await putEspoCRMApi<void>(urlBase, payload)
+  console.log(new Date().toTimeString(), 'updateApiParticipant recieved')
+  return response !== undefined
+}
+
 const updatePhotos = async (persons: iPerson[]): Promise<iPerson[]> => {
   const photos = await getPhotoUrls(persons.map((p) => p.vkID))
   const personsToSet = persons.map((person) => ({
@@ -288,5 +316,17 @@ const getEspoCRMApi = async <T>(urlBase: string): Promise<T> => {
 
   const responce = await apiService.get<T>(urlBase, { headers: headers })
   // console.log({ responce })
+  return responce
+}
+
+const putEspoCRMApi = async <T>(urlBase: string, payload: iEspoCRMApiPostPayload): Promise<T> => {
+  const headers = {
+    'X-Api-Key': REACT_APP_CRM_API_TOKEN,
+    'Content-Type': 'application/json',
+    'X-No-Total': 'true',
+  }
+
+  const responce = await apiService.put<T>(urlBase, { headers: headers, data: payload })
+  console.log({ responce })
   return responce
 }
